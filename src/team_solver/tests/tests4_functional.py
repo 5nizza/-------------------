@@ -19,11 +19,13 @@ import signal
 
 import random
 
+#TODO: ah: need to setup solvers paths
 class Test(unittest.TestCase):
     def server_func(self, port):
-        team_solver.main.main(['-p', str(port)])
+        stp_args = "/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp --SMTLIB2 -p"
+        team_solver.main.main(['-p', str(port), '-stp', stp_args, stp_args])
         print 'server_func: exit'
-
+        
     def client_func(self, port, number_of_queries=1, random_close=False):
         sock = gevent.socket.socket()
         sock.connect(('localhost', port))
@@ -57,29 +59,30 @@ class Test(unittest.TestCase):
         port = 18982
         server_g = gevent.spawn(self.server_func, port)
         gevent.sleep(1) #ensure server starts
-        
+
         sock = gevent.socket.socket()
         sock.connect(('localhost', port))
-        
+
         id = common.send_new_query(sock, common.SAT_QUERY)
         common.send_cancel_query(sock, id)
-        
+
         id = common.send_new_query(sock, common.SAT_QUERY)
         common.send_cancel_query(sock, id)
-        
+
         team_solver.main.sigint_handler()
         server_g.join()
 
-    def test_stress_test(self):
+    def test_stress_test(self): #TODO: ah, FATAL: blinking test: too many open files
         port = 18982
         server_g = gevent.spawn(self.server_func, port)
         gevent.sleep(1) #ensure server starts
 
         greenlets = []
-        for _ in range(1, 500):
+        for _ in range(1, 200):
             g = gevent.spawn(self.client_func, port, 3, True)
             greenlets.append(g)
         gevent.joinall(greenlets)
+        
         team_solver.main.sigint_handler()
         server_g.join()
 

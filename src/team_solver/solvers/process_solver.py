@@ -15,7 +15,7 @@ from gevent.hub import GreenletExit
 
 class ProcessSolver(common.ISolver):
     """ base class for external process based solvers """
-    
+
     def __init__(self, cmd_path, cmd_options = []):
         self._cmd_args = [cmd_path]
         self._cmd_args.extend(cmd_options or [])
@@ -25,7 +25,7 @@ class ProcessSolver(common.ISolver):
     def parse_solver_reply(self, solver_out):
         """return: parse_error, is_sat, assignment"""
         assert 0, 'abstract'
-    
+
     @property
     def name(self):
         return "derived solver hasn't setup its name"
@@ -39,7 +39,6 @@ class ProcessSolver(common.ISolver):
         if self._greenlet != None:
             self._greenlet.kill()
             self._greenlet = None #TODO: to gevent-mail-list: finally block of killed greenlet has not been executed
-
 #---------------------------------------------------------------------------
     def _solve(self, uniq_query, callbackOK, callbackError):
         try:

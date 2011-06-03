@@ -4,6 +4,10 @@ Created on May 24, 2011
 @author: art_haali
 '''
 
+STP_PATH = "/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp"
+Z3_PATH = "/home/art_haali/projects/smt-comparison/z3/bin/z3"
+
+
 SAT_QUERY = r"""
 (set-logic QF_ABV)
 (set-info :smt-lib-version 2.0)

@@ -14,7 +14,7 @@ import utils.all
 import gevent
 import gevent.event
 
-
+#TODO: ah, rename and test processor only
 class Test(unittest.TestCase):
     #TODO: help for 'strange thing: if main thread dies => this func return empty out'
     def test_cancel_hanged_solver(self):
@@ -36,7 +36,7 @@ class Test(unittest.TestCase):
             ev_ok.set()
         def callbackError(_, uniq_query, err_desc): assert 0
 
-        solver = STPWrapper("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
+        solver = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
         uniq_query = team_solver.common.UniqueQuery(123, common.SAT_QUERY)
         solver.solve_async(uniq_query, callbackOK, callbackError)
         
@@ -50,13 +50,14 @@ class Test(unittest.TestCase):
             ev_ok.set()
         def callbackError(_, uniq_query, err_desc): assert 0
 
-        solver = STPWrapper("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
+        solver = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
         uniq_query = team_solver.common.UniqueQuery(123, common.UNSAT_QUERY)
         solver.solve_async(uniq_query, callbackOK, callbackError)
 
         assert ev_ok.wait(5)
         assert self.solver_result != None
         assert not self.solver_result.is_sat
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

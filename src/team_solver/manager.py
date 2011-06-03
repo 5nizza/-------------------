@@ -12,7 +12,7 @@ from team_solver.common import ICmdHandler
 import gevent.event
 
 class Manager(ICmdHandler):
-    LOG_PREFIX = 'manager: '
+    LOG_PREFIX = 'Manager: '
     def __init__(self, solver, cmd_channel):
         self._solver = solver
         self._cmd_channel = cmd_channel

@@ -18,6 +18,8 @@ import argparse
 import sys
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 from team_solver.solvers.benchmarking_solver import BenchmarkingSolver
+from team_solver.solvers.boolector_wrapper import BoolectorWrapper
+from team_solver.solvers.z3_wrapper import Z3Wrapper
 
 
 ev_stop = None
@@ -29,14 +31,9 @@ def work_around_infinite_wait(): # we need some active greenlet, since gevent ha
         if ev_stop.wait(0.5):
             break
 
-def create_solver(solvers_args, benchmark_mode):
-    solvers = [STPWrapper(args[0], args[1]) for args in solvers_args]
-#    if len(solvers) == 1:
-#        return solvers[0]
-
-    if benchmark_mode:
-        return BenchmarkingSolver(solvers)
-    return PortfolioSolver(solvers)
+def create_solvers(ctor, solvers_args):
+    cmds_opts = [(sa.split()[0], sa.split()[1:]) for sa in solvers_args]
+    return [ctor(a[0], a[1]) for a in cmds_opts]
 
 #TODO: use logging module
 def main(argv):
@@ -64,24 +61,25 @@ def main(argv):
 #                        default = ["/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp --SMTLIB2 -p"],
                         help='add stp solvers (cmds in quotes, separated by space, e.g.: "..../stp --SMTLIB2 -p")')
 
-    parser.add_argument('-boo', metavar='boolector-solver', type=str,
-                        dest = "boo_solvers",
+    parser.add_argument('-z3', metavar='z3-solver', type=str,
+                        dest = "z3_solvers",
                         nargs = "*",
                         default=[],
-                        help='add boolector solvers (cmd in quotes, separated by space, e.g.: "..../boolector --smt -m")')
+                        help='add z3 solvers (cmd in quotes, separated by space, e.g.: "..../z3 -in -smt2 -m")')
 
     args = parser.parse_args(argv)
     port = args.p
 
-    print args.stp_solvers
-    print args.boo_solvers
-    exit(0)
-    stp_args = []
-    for sa in [x.strip('"') for x in args.stp_solvers]:
-        solver_cmd, solver_opt = sa.split()[0], sa.split()[1:]
-        stp_args.append((solver_cmd, solver_opt))
+    stp_solvers = create_solvers(STPWrapper, args.stp_solvers)
+    z3_solvers = create_solvers(Z3Wrapper, args.z3_solvers)
+    all_solvers = stp_solvers + z3_solvers
+    solver = None
+    print "Created {0} solvers".format(len(all_solvers))
+    if args.benchmark_mode:
+        solver = BenchmarkingSolver(all_solvers)
+    else:
+        solver = PortfolioSolver(all_solvers)
 
-    solver = create_solver(solvers_args, args.benchmark_mode)
     cmd_channel = TcpCmdChannel("localhost", port)
     man = Manager(solver, cmd_channel)
 
