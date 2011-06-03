@@ -1,5 +1,0 @@
-#!/bin/bash
-
-export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-
-python src/team_solver/main.py $*

@@ -1,0 +1,8 @@
+setup PYTHONPATH to include ./src:
+. ./setup-env.sh
+
+Run server:
+./src/team_solver/main.py
+
+Send query to the server:
+./src/team_solver/simple_client.py smt-file

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 Created on May 12, 2011
 
@@ -49,25 +50,36 @@ def main(argv):
     parser = argparse.ArgumentParser(description='SMT Solver Server.')
     parser.add_argument('-p', metavar='port', type=int, default=12345,
                    help='listening port (default: %(default)i)')
-
-    parser.add_argument('-solvers', metavar='solvers', type=str, 
-                        nargs = "+",
-                        default = ["/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp --SMTLIB2 -p"],
-                        help='solvers: cmds to run (in quotes, separated by space, e.g.: "..../stp --SMTLIB2 -p")')
-
+    
     parser.add_argument('-b', 
                         dest="benchmark_mode",
                         action="store_true", 
                         default=False, 
                         help='start in a benchmarking mode (default: %(default)i)') #TODO: ah, boolean format
 
+    parser.add_argument('-stp', metavar='stp-solver', type=str, 
+                        dest = "stp_solvers",
+                        nargs = "*",
+                        default=[],
+#                        default = ["/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp --SMTLIB2 -p"],
+                        help='add stp solvers (cmds in quotes, separated by space, e.g.: "..../stp --SMTLIB2 -p")')
+
+    parser.add_argument('-boo', metavar='boolector-solver', type=str,
+                        dest = "boo_solvers",
+                        nargs = "*",
+                        default=[],
+                        help='add boolector solvers (cmd in quotes, separated by space, e.g.: "..../boolector --smt -m")')
+
     args = parser.parse_args(argv)
     port = args.p
 
-    solvers_args = []
-    for sa in [x.strip('"') for x in args.solvers]:
+    print args.stp_solvers
+    print args.boo_solvers
+    exit(0)
+    stp_args = []
+    for sa in [x.strip('"') for x in args.stp_solvers]:
         solver_cmd, solver_opt = sa.split()[0], sa.split()[1:]
-        solvers_args.append((solver_cmd, solver_opt))
+        stp_args.append((solver_cmd, solver_opt))
 
     solver = create_solver(solvers_args, args.benchmark_mode)
     cmd_channel = TcpCmdChannel("localhost", port)
