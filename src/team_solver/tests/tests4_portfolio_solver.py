@@ -4,7 +4,7 @@ Created on May 20, 2011
 @author: art_haali
 '''
 import unittest
-from team_solver.solvers.stp_solver import STPSolver
+from team_solver.solvers.stp_wrapper import STPWrapper
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 
 import common
@@ -37,22 +37,22 @@ class Test(unittest.TestCase):
         assert ev_ok.wait(5)
 
     def test_sat_query(self):
-        solver1 = STPSolver("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
-        solver2 = STPSolver("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
+        solver1 = STPWrapper("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
+        solver2 = STPWrapper("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
         self.do_sat_test([solver1, solver2])
 
     def test_one_solver_hanged(self):
-        solver1 = STPSolver("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
-        solver2 = STPSolver("python", ["-c", "while True: pass"])
+        solver1 = STPWrapper("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
+        solver2 = STPWrapper("python", ["-c", "while True: pass"])
         self.do_sat_test([solver1, solver2])
 
     def test_sat_stress_test(self):
         solvers = []
         for _ in range(1, 50):
             if random.random() > 1/2.:
-                solver = STPSolver("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
+                solver = STPWrapper("/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp", ["--SMTLIB2", "-p"])
             else:
-                solver = STPSolver("python", ["-c", "while True: pass"])
+                solver = STPWrapper("python", ["-c", "while True: pass"])
             solvers.append(solver)
         self.do_sat_test(solvers)
 

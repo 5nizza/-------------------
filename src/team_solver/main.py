@@ -10,7 +10,7 @@ import team_solver.manager
 
 import signal
 import gevent.event
-from team_solver.solvers.stp_solver import STPSolver
+from team_solver.solvers.stp_wrapper import STPWrapper
 from team_solver.manager import Manager
 
 import argparse
@@ -29,7 +29,7 @@ def work_around_infinite_wait(): # we need some active greenlet, since gevent ha
             break
 
 def create_solver(solvers_args, benchmark_mode):
-    solvers = [STPSolver(args[0], args[1]) for args in solvers_args]
+    solvers = [STPWrapper(args[0], args[1]) for args in solvers_args]
 #    if len(solvers) == 1:
 #        return solvers[0]
 

@@ -2,4 +2,4 @@
 
 export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 
-python src/team_solver/simple_client.py
+python src/team_solver/simple_client.py $*
