@@ -1,0 +1,41 @@
+package team_solver;
+
+message CommandMessage {
+	enum Type {
+		NEW_QUERY = 1;
+		CANCEL_QUERY = 2;
+	}
+	
+	message NewQueryMessage {
+		required string query = 1;
+	}
+	
+	message CancelQueryMessage { }
+	
+
+	required int32 cmdId = 1;
+	required Type type = 2;
+	
+	optional NewQueryMessage newQuery = 3;
+	optional CancelQueryMessage cancelQuery = 4;
+}
+
+message ReplyMessage {
+	enum Type {
+		SAT = 1;
+		UNSAT = 2;
+	}
+
+	message SatReplyMessage { 
+		required string assignment = 1; //TODO: decide format
+	}
+
+	message UnsatReplyMessage { }
+
+	required Type type = 1;
+	required int32 cmdId = 2;
+	optional string stats = 5; //for portfolio - the only time, for benchmarking solver - different times
+
+	optional SatReplyMessage sat = 3;
+	optional UnsatReplyMessage unsat = 4;
+}

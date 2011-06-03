@@ -1,0 +1,4 @@
+size: byte[4]
+protobuf message of len = size
+
+//TODO: any standard impl? how to avoid protocol invention at all?
