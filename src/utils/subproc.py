@@ -60,7 +60,7 @@ def popen_communicate(args, data=''):
 
         write_pipe(p.stdin, data)
         p.stdin.close()
-        
+
         out = read_pipe(p.stdout)
         p.stdout.close()
 
@@ -75,6 +75,7 @@ def popen_communicate(args, data=''):
         if p != None:
             try:
                 p.terminate()
+                p.wait() #otherwise - zombie!
             except OSError, e:
                 if e.errno != errno.ESRCH: #process doesn't exist
                     raise

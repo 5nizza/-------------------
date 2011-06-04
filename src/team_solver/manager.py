@@ -19,19 +19,28 @@ class Manager(ICmdHandler):
         self._cmd_channel.register_cmd_handler(self)
         self._queries = []
         self._solver_is_busy = False
+        self._ev_next_query = gevent.event.Event()
 
 
     def start(self, ev_stop):
         self._cmd_channel.start()
         print self.LOG_PREFIX, 'started'
-        ev_stop.wait()
-        self._cmd_channel.stop()
+        while True:
+            ev = utils.all.wait_any([ev_stop, self._ev_next_query])
+            if ev == self._ev_next_query:
+                self._ev_next_query.clear()
+                self._schedule_next_query()
+                continue
+            if ev == ev_stop:
+                self._cmd_channel.stop()
+                break
+
         print self.LOG_PREFIX, 'stopped'
 
 #---ICmdHandler----------------------------------------------------------------
     def on_new_query(self, uniq_query):
         self._queries.append(uniq_query)
-        self._schedule_next_query()
+        self._ev_next_query.set()
 
     def on_cancel_query(self, uniq_query):
         if uniq_query in self._queries:
@@ -39,20 +48,20 @@ class Manager(ICmdHandler):
         else:
             if self._solver_is_busy == False:  #client doesn't know yet that the query has already been processed
                 return
-            
-            self._solver.cancel()
+
+            self._solver.cancel() #context switching call
             self._solver_is_busy = False
-            self._schedule_next_query()
+            self._ev_next_query.set()
 
 #---SolverHandler--------------------------------------------------------------
     def _on_solver_ok(self, solver, solver_result):
+        self._cmd_channel.send_result(solver_result) #context switching call(?)
         self._solver_is_busy = False #TODO: ah, get rid of
-        self._cmd_channel.send_result(solver_result)
-        self._schedule_next_query()
+        self._ev_next_query.set()
 
     def _on_solver_error(self, solver, uniq_query, error):
         self._solver_is_busy = False
-        self._schedule_next_query()
+        self._ev_next_query.set()
 
     def _schedule_next_query(self):
         #TODO: validate input data before send to solver

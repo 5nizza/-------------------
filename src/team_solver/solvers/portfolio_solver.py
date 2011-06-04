@@ -37,7 +37,7 @@ class PortfolioSolver(team_solver.common.ISolver):
             return
         self._errored += 1
         self.cancel_others(solver)
-        self._callbackError(solver, uniq_query, err_desc)#----------------------------------------------------------------------------
+        self._callbackError(solver, uniq_query, err_desc)
 
 #----------------------------------------------------------------------------      
     def cancel_others(self, solver_to_leave=None):

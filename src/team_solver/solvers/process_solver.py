@@ -38,18 +38,19 @@ class ProcessSolver(common.ISolver):
     def cancel(self):
         if self._greenlet != None:
             self._greenlet.kill()
-            self._greenlet = None #TODO: to gevent-mail-list: finally block of killed greenlet has not been executed
+            self._greenlet = None #greenlet is created but not started
+
 #---------------------------------------------------------------------------
     def _solve(self, uniq_query, callbackOK, callbackError):
         try:
             start = time.time()
-            
+
             returncode, out, err = utils.subproc.popen_communicate(self._cmd_args, uniq_query.query)
             if returncode < 0:
                 error_desc = "return code < 0: {0}\n stdout:\n{1}\n stderr:\n{2}".format(returncode, out, err)
                 callback = lambda: callbackError(self, uniq_query, error_desc)
                 return
-            
+
             finish = time.time()
 
             parse_error, is_sat, assignment = self.parse_solver_reply(out)
@@ -59,7 +60,6 @@ class ProcessSolver(common.ISolver):
                 callback = lambda: callbackError(self, uniq_query, parse_error) #TODO: get rid of it?
         except GreenletExit:
             callback = lambda: True
-            pass
         except Exception, e:
             print >>sys.stderr, self._name, ": FATAL error: \n", traceback.format_exc()
             callback = lambda: callbackError(self, uniq_query, e)
