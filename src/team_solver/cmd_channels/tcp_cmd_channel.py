@@ -106,12 +106,12 @@ class TcpCmdChannel(ICmdChannel):
             self._cancel_query_on_socket(socket)
         except Exception, e:
             print >>stderr, log_prefix, "FATAL error:{0}\n".format(e)
-            print
-#            print
-#            print >>stderr, history
-#            print >>stderr, message
             raise
         finally:
+            try:
+                socket.close()
+            except Exception, e:
+                print log_prefix, e
             print log_prefix, "exited"
             self._acceptors.remove(gevent.greenlet.getcurrent())
 

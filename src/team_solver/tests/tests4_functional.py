@@ -21,19 +21,21 @@ import random
 
 #TODO: ah: need to setup solvers paths
 class Test(unittest.TestCase):
-    def server_func(self, port):
+    def server_func(self, port, num_solvers=2):
         stp_args = common.STP_PATH + " --SMTLIB2 -p"
-        team_solver.main.main(['-p', str(port), '-stp', stp_args, stp_args, stp_args, stp_args, stp_args, stp_args, stp_args, stp_args, stp_args])
+        solvers = []
+        for _ in range(1, num_solvers):
+            solvers.append(stp_args)
+        team_solver.main.main(['-p', str(port), '-stp'] + solvers)
         print 'server_func: exit'
 
     def client_func(self, port, number_of_queries=1, random_close=False):
         sock = gevent.socket.socket()
-        sock.connect(('localhost', port))
+        sock.connect(('127.0.0.1', port))
         for _ in range(1, number_of_queries):
             id = common.send_new_query(sock, common.SAT_QUERY)
             if random_close and random.random() > 1/2.:
-                sock.close()
-                return
+                break
             common.send_cancel_query(sock, id)
             id = common.send_new_query(sock, common.SAT_QUERY)
 
@@ -74,12 +76,12 @@ class Test(unittest.TestCase):
 
     def test_stress_test(self):
         port = 18982
-        server_g = gevent.spawn(self.server_func, port)
-        gevent.sleep(1) #ensure server starts
+        server_g = gevent.spawn(self.server_func, port, 10)
+        gevent.sleep(1) #TODO: ah, ensure server starts
 
         greenlets = []
-        for _ in range(1, 500):
-            g = gevent.spawn(self.client_func, port, 5, True)
+        for _ in range(1, 100):
+            g = gevent.spawn(self.client_func, port, 10, True)
             greenlets.append(g)
         gevent.joinall(greenlets)
         
