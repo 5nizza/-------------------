@@ -8,12 +8,12 @@ import team_solver.common
 import sys
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 
-#TODO: ah, minor: add tests
+#TODO: 2: ah, minor: add tests
 class BenchmarkingSolver(PortfolioSolver):
     def __init__(self, solvers):
         PortfolioSolver.__init__(self, solvers)
         self._init()
-    
+
     def _init(self):
         self._stats = []
         self._solved = 0

@@ -19,10 +19,8 @@ SAT_QUERY = r"""
 (check-sat)
 (exit)
 """
-SAT_QUERY_ASSIGNMENT = r"""ASSERT( arr3_n_args_0x1acd8b0[0x00000001] = 0x00 );
-ASSERT( arr3_n_args_0x1acd8b0[0x00000002] = 0x00 );
-ASSERT( arr3_n_args_0x1acd8b0[0x00000000] = 0x01 );
-ASSERT( arr3_n_args_0x1acd8b0[0x00000003] = 0x00 );"""
+SAT_QUERY_ASSIGNMENT = {'arr3_n_args_0x1acd8b0':[1, 0, 0, 0]}
+SAT_QUERY_ASSIGNMENT_SERIALIZED = 'arr3_n_args_0x1acd8b0 1,0,0,0'
 
 UNSAT_QUERY = r"""
 (set-logic QF_ABV)
@@ -64,7 +62,7 @@ def send_cancel_query(sock, cmd_id):
     cancel_query_mes_as_string = cancel_query_mes.SerializeToString()
     sock.sendall(struct.pack('I', len(cancel_query_mes_as_string)))
     sock.sendall(cancel_query_mes_as_string)
-    
+
 #TODO: extract common functions, use them in cmd_channel
 def recv_to_message(sock, mes, ev_cancel=None):
     mes_size = struct.unpack("I", utils.all.recv_size(sock, 4))[0]
@@ -72,6 +70,17 @@ def recv_to_message(sock, mes, ev_cancel=None):
     mes.ParseFromString(message_as_string)
 
 def assert_sat_assignments(a1, a2):
+    """ input: a: dict: arr_name -> [] of values """
+    assert len(a1) == len(a2), '{0} vs {1}'.format(len(a1), len(a2))
+    for a in a1:
+        assert a in a2
+        assert a1[a] == a2[a], '{0} vs {1}'.format(a1[a], a2[a])
+
+def assert_sat_ser_assignments(a1, a2):
+    """ input: serialized assignments """
     assert len(a1.strip().split("\n")) == len(a2.strip().split('\n'))
     for a in a1.split("\n"):
         assert a in a2
+
+
+

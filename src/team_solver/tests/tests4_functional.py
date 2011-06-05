@@ -19,7 +19,7 @@ import signal
 
 import random
 
-#TODO: ah: need to setup solvers paths
+#TODO: 1: ah: need to setup solvers paths
 class Test(unittest.TestCase):
     def server_func(self, port, num_solvers=2):
         stp_args = common.STP_PATH + " --SMTLIB2 -p"
@@ -46,7 +46,7 @@ class Test(unittest.TestCase):
                 if reply.cmdId == id:
                     break
             assert reply.type == ReplyMessage.SAT
-            common.assert_sat_assignments(reply.sat.assignment, common.SAT_QUERY_ASSIGNMENT)
+            common.assert_sat_ser_assignments(reply.sat.assignment, common.SAT_QUERY_ASSIGNMENT_SERIALIZED)
         sock.close()
 
     def test_should_work(self):
@@ -77,7 +77,7 @@ class Test(unittest.TestCase):
     def test_stress_test(self):
         port = 18982
         server_g = gevent.spawn(self.server_func, port, 10)
-        gevent.sleep(1) #TODO: ah, ensure server starts
+        gevent.sleep(1) #TODO: ah, ensure server starts - get rid of
 
         greenlets = []
         for _ in range(1, 100):

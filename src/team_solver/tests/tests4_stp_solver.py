@@ -14,7 +14,7 @@ import utils.all
 import gevent
 import gevent.event
 
-#TODO: ah, rename and test processor only
+#TODO: 1: ah, rename and test processor only
 class Test(unittest.TestCase):
     #TODO: help for 'strange thing: if main thread dies => this func return empty out'
     def test_cancel_hanged_solver(self):
@@ -39,7 +39,7 @@ class Test(unittest.TestCase):
         solver = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
         uniq_query = team_solver.common.UniqueQuery(123, common.SAT_QUERY)
         solver.solve_async(uniq_query, callbackOK, callbackError)
-        
+
         assert ev_ok.wait(5)
 
     def test_unsat_query(self):

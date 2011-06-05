@@ -13,7 +13,6 @@ import gevent.socket
 
 from team_solver.cmd_channels.team_solver_messages_pb2 import ReplyMessage
 
-#TODO: ah, not a true async, send is blocking. think. check reactor/proactor pattern.
 def main(argv):
     parser = argparse.ArgumentParser(description='Simple client to SMT Solver Server.')
     parser.add_argument('-a', metavar='address', type=str, default='localhost',

@@ -79,16 +79,16 @@ class TcpCmdChannel(ICmdChannel):
             reply_message = self._create_message(solver_result)
             self._del_query(solver_result.unique_query)
             self._send_message(reply_message, sock)
-            
+
         #Otherwise the socket was closed and the solver reported result at the same time.
-        
+
 #------------------------------------------------------------------------------
     def _accept(self, socket, address):
         log_prefix = 'client acceptor ({0}): '.format(address)
         print log_prefix, 'started'
         try:
             while True:
-                message = self._read_message(socket) #TODO: optimize: if there is data in buffer, but connection was reset we still continue to read it: discard it!
+                message = self._read_message(socket) #TODO: 2: optimize: if there is data in buffer, but connection was reset we still continue to read it: discard it!
                 if self._stop:
                     break
                 if message == None: #client disconnected
@@ -174,7 +174,15 @@ class TcpCmdChannel(ICmdChannel):
         reply_message.stats.extend(solver_result.stats)
         if solver_result.is_sat:
             reply_message.type = ReplyMessage.SAT #@UndefinedVariable
-            reply_message.sat.assignment = solver_result.assignment #TODO: assignment format
+            assignment = None
+            for a in solver_result.assignment:
+                if assignment == None:
+                    assignment = ''
+                else:
+                    assignment += '\n'
+                assignment += a + ' '
+                assignment += ','.join([str(_) for _ in solver_result.assignment[a]])
+            reply_message.sat.assignment = assignment
         else:
             reply_message.type = ReplyMessage.UNSAT #@UndefinedVariable
         return reply_message

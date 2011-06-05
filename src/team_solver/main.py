@@ -35,7 +35,7 @@ def create_solvers(ctor, solvers_args):
     cmds_opts = [(sa.split()[0], sa.split()[1:]) for sa in solvers_args]
     return [ctor(a[0], a[1]) for a in cmds_opts]
 
-#TODO: use logging module
+#TODO: 1: use logging module
 def main(argv):
     global ev_stop
     ev_stop = gevent.event.Event()
@@ -43,7 +43,7 @@ def main(argv):
     signal.signal(signal.SIGINT, sigint_handler)
     gevent.spawn(work_around_infinite_wait)
     
-    #TODO: add sanity validations of input: port number, etc.
+    #TODO: 1: add sanity validations of input: port number, etc.
     parser = argparse.ArgumentParser(description='SMT Solver Server.')
     parser.add_argument('-p', metavar='port', type=int, default=12345,
                    help='listening port (default: %(default)i)')
@@ -52,7 +52,7 @@ def main(argv):
                         dest="benchmark_mode",
                         action="store_true", 
                         default=False, 
-                        help='start in a benchmarking mode (default: %(default)i)') #TODO: ah, boolean format
+                        help='start in a benchmarking mode (default: %(default)i)') #TODO: 2: ah, boolean format
 
     parser.add_argument('-stp', metavar='stp-solver', type=str, 
                         dest = "stp_solvers",

@@ -8,6 +8,14 @@ from gevent.event import AsyncResult
 import gevent.select
 import sys
 
+def arrs_to_assignment(arrs):
+    """ #assumption: indexes are sequential 0, .. """
+    assignment = {} # dict: arr_name -> [] of values
+    for a in arrs:
+        assignment[a] = []
+        for index in range(0, len(arrs[a])): 
+            assignment[a].append(arrs[a][index])
+    return assignment
 
 def wait_any(events, timeout=None):
     result = AsyncResult()

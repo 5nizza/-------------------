@@ -1,4 +1,5 @@
 from team_solver.solvers.process_solver import ProcessSolver
+import utils.all
 
 class STPWrapper(ProcessSolver):
     def __init__(self, cmd_path, cmd_options = []):
@@ -24,10 +25,20 @@ class STPWrapper(ProcessSolver):
 
         if not is_sat:
             return None, False, None
-        
-        assignment = [l for l in lines[:-1] if l.startswith("ASSERT")]
 
-        return None, True, '\n'.join(assignment)
+        a_lines = [_.strip() for _ in lines[:-1] if _.startswith("ASSERT")]
+        #ASSERT( arr3_n_args_0x1acd8b0[0x00000001] = 0x00 );
+        #ASSERT( arr3_n_args_0x1acd8b0[0x00000002] = 0x00 );
+        #ASSERT( arr3_n_args_0x1acd8b0[0x00000000] = 0x01 );
+        #ASSERT( arr3_n_args_0x1acd8b0[0x00000003] = 0x00 );
+        arrs = {}
+        for l in a_lines:
+            arr_name = l[l.index(' ') + 1: l.index('[')]
+            index = int(l[l.index('[') + 1 : l.index(']')], 16)
+            value = int(l.split('=')[1].replace(' );', '').strip(), 16)
+            arrs[arr_name] = arrs.get(arr_name, {})
+            arrs[arr_name][index] = value
+        return None, True, utils.all.arrs_to_assignment(arrs)
     
     @property
     def name(self):

@@ -13,6 +13,7 @@ import gevent
 from gevent.hub import GreenletExit
 
 
+#TODO: 1: replace inheritance by input arg 'parser'
 class ProcessSolver(common.ISolver):
     """ base class for external process based solvers """
 
@@ -41,6 +42,7 @@ class ProcessSolver(common.ISolver):
             self._greenlet = None #greenlet is created but not started
 
 #---------------------------------------------------------------------------
+    #TODO: ah, send is blocking => stealing time from solver
     def _solve(self, uniq_query, callbackOK, callbackError):
         try:
             start = time.time()

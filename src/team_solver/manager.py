@@ -64,7 +64,7 @@ class Manager(ICmdHandler):
         self._ev_next_query.set()
 
     def _schedule_next_query(self):
-        #TODO: validate input data before send to solver
+        #TODO: 1: validate input data before send to solver
         if self._solver_is_busy == False and self._queries:
             uniq_query = self._queries.pop(0)
             self._solver_is_busy = True
