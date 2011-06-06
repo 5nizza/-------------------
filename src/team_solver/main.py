@@ -67,12 +67,21 @@ def main(argv):
                         default=[],
                         help='add z3 solvers (cmd in quotes, separated by space, e.g.: "..../z3 -in -smt2 -m")')
 
+    parser.add_argument('-boolector', metavar='boolector-solver', type=str,
+                        dest = "boolector_solvers",
+                        nargs = "*",
+                        default=[],
+                        help='add boolector solvers (cmd in quotes, separated by space, e.g.: "..../boolector -m -d")')
+
     args = parser.parse_args(argv)
     port = args.p
 
     stp_solvers = create_solvers(STPWrapper, args.stp_solvers)
     z3_solvers = create_solvers(Z3Wrapper, args.z3_solvers)
-    all_solvers = stp_solvers + z3_solvers
+    boolector_solvers = create_solvers(BoolectorWrapper, args.boolector_solvers)
+
+    all_solvers = stp_solvers + z3_solvers + boolector_solvers
+
     solver = None
     print "Created {0} solvers".format(len(all_solvers))
     if args.benchmark_mode:

@@ -9,7 +9,9 @@ import gevent.select
 import sys
 
 def arrs_to_assignment(arrs):
-    """ #assumption: indexes are sequential 0, .. """
+    """ #assumption: indexes are sequential 0, .. 
+        input: {arr: {index: value}, ..}
+    """
     assignment = {} # dict: arr_name -> [] of values
     for a in arrs:
         assignment[a] = []

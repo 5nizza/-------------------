@@ -12,12 +12,9 @@ class Z3Wrapper(ProcessSolver):
         if solver_out == None or solver_out.strip() == '':
             return "parse error: solver output is empty", None, None
 
-        is_sat = False
-        if solver_out.split()[-1] == 'sat':
-            is_sat = True
-        elif solver_out.split()[-1] == 'unsat':
+        if solver_out.split()[-1] == 'unsat':
             return None, False, None
-        else:
+        elif solver_out.split()[-1] != 'sat':
             return "couldn't parse status from the last line", None, None
         
 #(define arr4_0x1c9c2c0 as-array[k!0])
@@ -48,17 +45,20 @@ class Z3Wrapper(ProcessSolver):
         arrname_by_var = self._get_arr_var(solver_out)
         arrs = {}
         cur_arr = None
-        for l in solver_out.split('\n'):
-            l = l.strip()
-            if l.startswith('(define ('):
-                var_name = self._var_re.search(l).groups()[0]
-                arrs[arrname_by_var[var_name]] = cur_arr = {}
-            if l.startswith('(if'):
-                assert cur_arr != None
-                index, value = [int(_) for _ in re.findall('bv([0-9]+)', l)]
-                cur_arr[index] = value
+        try:
+            for l in solver_out.split('\n'):
+                l = l.strip()
+                if l.startswith('(define ('):
+                    var_name = self._var_re.search(l).groups()[0]
+                    arrs[arrname_by_var[var_name]] = cur_arr = {}
+                if l.startswith('(if'):
+                    assert cur_arr != None
+                    index, value = [int(_) for _ in re.findall('bv([0-9]+)', l)]
+                    cur_arr[index] = value
+        except ValueError, e:
+            return "unknown format: {0}".format(str(e)), None, None
 
-        return None, is_sat, utils.all.arrs_to_assignment(arrs)
+        return None, True, utils.all.arrs_to_assignment(arrs)
 
     def _get_arr_var(self, solver_out):
         arr_by_var = {}

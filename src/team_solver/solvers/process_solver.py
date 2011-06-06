@@ -46,7 +46,6 @@ class ProcessSolver(common.ISolver):
     def _solve(self, uniq_query, callbackOK, callbackError):
         try:
             start = time.time()
-
             returncode, out, err = utils.subproc.popen_communicate(self._cmd_args, uniq_query.query)
             if returncode < 0:
                 error_desc = "return code < 0: {0}\n stdout:\n{1}\n stderr:\n{2}".format(returncode, out, err)
@@ -68,4 +67,4 @@ class ProcessSolver(common.ISolver):
         finally:
             self._greenlet = None
             callback()
-            
+

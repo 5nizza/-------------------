@@ -15,16 +15,10 @@ class STPWrapper(ProcessSolver):
             return 'unknown solver output format: {0}'.format(solver_out), None, None
         last_line = lines[-1]
 
-        is_sat = None
-        if last_line == 'sat':
-            is_sat = True
-        elif last_line == 'unsat':
-            is_sat = False
-        else:
-            return "couldn't parse query status: last_line ('{1}') is not sat/unsat:\n {0}".format(solver_out, last_line), None, None
-
-        if not is_sat:
+        if last_line == 'unsat':
             return None, False, None
+        elif last_line != 'sat':
+            return "couldn't parse query status: last_line ('{1}') is not sat/unsat:\n {0}".format(solver_out, last_line), None, None
 
         a_lines = [_.strip() for _ in lines[:-1] if _.startswith("ASSERT")]
         #ASSERT( arr3_n_args_0x1acd8b0[0x00000001] = 0x00 );
@@ -39,7 +33,7 @@ class STPWrapper(ProcessSolver):
             arrs[arr_name] = arrs.get(arr_name, {})
             arrs[arr_name][index] = value
         return None, True, utils.all.arrs_to_assignment(arrs)
-    
+
     @property
     def name(self):
         return self._name
