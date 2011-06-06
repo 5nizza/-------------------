@@ -1,0 +1,38 @@
+array arr17[4] : w32 -> w8 = symbolic
+array arr6[144] : w32 -> w8 = symbolic
+array arr18[4] : w32 -> w8 = symbolic
+array arr14[144] : w32 -> w8 = symbolic
+array arr11[144] : w32 -> w8 = symbolic
+array arr3[144] : w32 -> w8 = symbolic
+(query [(Eq false
+(Eq 0
+(And w64 (ReadLSB w64 8 arr3)
+2147483647)))
+(Ult (ReadLSB w64 56 arr3)
+65536)
+(Eq false
+(Eq 0
+(And w64 (ReadLSB w64 8 arr6)
+2147483647)))
+(Ult (ReadLSB w64 56 arr6)
+65536)
+(Eq false
+(Eq 0
+(And w64 (ReadLSB w64 8 arr11)
+2147483647)))
+(Ult (ReadLSB w64 56 arr11)
+65536)
+(Eq false
+(Eq 0
+(And w64 (ReadLSB w64 8 arr14)
+2147483647)))
+(Ult (ReadLSB w64 56 arr14)
+65536)
+(Ult N0:(ReadLSB w32 0 arr17)
+3)
+(Eq false (Slt 0 N0))]
+(Eq false
+(Ult (ReadLSB w32 0 arr18)
+2)))
+
+

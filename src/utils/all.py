@@ -9,15 +9,12 @@ import gevent.select
 import sys
 
 def arrs_to_assignment(arrs):
-    """ #assumption: indexes are sequential 0, .. 
-        input: {arr: {index: value}, ..}
     """
-    assignment = {} # dict: arr_name -> [] of values
-    for a in arrs:
-        assignment[a] = []
-        for index in range(0, len(arrs[a])): 
-            assignment[a].append(arrs[a][index])
-    return assignment
+    input: {arr: {index: value}, ..}
+    output: arr_name[index] value
+    """
+    #TODO: 0: ah: restore!
+    return {}
 
 def wait_any(events, timeout=None):
     result = AsyncResult()
