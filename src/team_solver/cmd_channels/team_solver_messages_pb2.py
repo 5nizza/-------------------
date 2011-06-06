@@ -10,7 +10,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = descriptor.FileDescriptor(
   name='team-solver-messages.proto',
   package='team_solver',
-  serialized_pb='\n\x1ateam-solver-messages.proto\x12\x0bteam_solver\"\xb4\x02\n\x0e\x43ommandMessage\x12\r\n\x05\x63mdId\x18\x01 \x02(\x05\x12.\n\x04type\x18\x02 \x02(\x0e\x32 .team_solver.CommandMessage.Type\x12=\n\x08newQuery\x18\x03 \x01(\x0b\x32+.team_solver.CommandMessage.NewQueryMessage\x12\x43\n\x0b\x63\x61ncelQuery\x18\x04 \x01(\x0b\x32..team_solver.CommandMessage.CancelQueryMessage\x1a \n\x0fNewQueryMessage\x12\r\n\x05query\x18\x01 \x02(\t\x1a\x14\n\x12\x43\x61ncelQueryMessage\"\'\n\x04Type\x12\r\n\tNEW_QUERY\x10\x01\x12\x10\n\x0c\x43\x41NCEL_QUERY\x10\x02\"\xa6\x02\n\x0cReplyMessage\x12,\n\x04type\x18\x01 \x02(\x0e\x32\x1e.team_solver.ReplyMessage.Type\x12\r\n\x05\x63mdId\x18\x02 \x02(\x05\x12\r\n\x05stats\x18\x05 \x03(\t\x12\x36\n\x03sat\x18\x03 \x01(\x0b\x32).team_solver.ReplyMessage.SatReplyMessage\x12:\n\x05unsat\x18\x04 \x01(\x0b\x32+.team_solver.ReplyMessage.UnsatReplyMessage\x1a%\n\x0fSatReplyMessage\x12\x12\n\nassignment\x18\x01 \x02(\t\x1a\x13\n\x11UnsatReplyMessage\"\x1a\n\x04Type\x12\x07\n\x03SAT\x10\x01\x12\t\n\x05UNSAT\x10\x02')
+  serialized_pb='\n\x1ateam-solver-messages.proto\x12\x0bteam_solver\"\xb4\x02\n\x0e\x43ommandMessage\x12\r\n\x05\x63mdId\x18\x01 \x02(\x05\x12.\n\x04type\x18\x02 \x02(\x0e\x32 .team_solver.CommandMessage.Type\x12=\n\x08newQuery\x18\x03 \x01(\x0b\x32+.team_solver.CommandMessage.NewQueryMessage\x12\x43\n\x0b\x63\x61ncelQuery\x18\x04 \x01(\x0b\x32..team_solver.CommandMessage.CancelQueryMessage\x1a \n\x0fNewQueryMessage\x12\r\n\x05query\x18\x01 \x02(\t\x1a\x14\n\x12\x43\x61ncelQueryMessage\"\'\n\x04Type\x12\r\n\tNEW_QUERY\x10\x01\x12\x10\n\x0c\x43\x41NCEL_QUERY\x10\x02\"\xa6\x02\n\x0cReplyMessage\x12,\n\x04type\x18\x01 \x02(\x0e\x32\x1e.team_solver.ReplyMessage.Type\x12\r\n\x05\x63mdId\x18\x02 \x02(\x05\x12\r\n\x05stats\x18\x05 \x03(\t\x12\x36\n\x03sat\x18\x03 \x01(\x0b\x32).team_solver.ReplyMessage.SatReplyMessage\x12:\n\x05unsat\x18\x04 \x01(\x0b\x32+.team_solver.ReplyMessage.UnsatReplyMessage\x1a%\n\x0fSatReplyMessage\x12\x12\n\nassignment\x18\x01 \x03(\t\x1a\x13\n\x11UnsatReplyMessage\"\x1a\n\x04Type\x12\x07\n\x03SAT\x10\x01\x12\t\n\x05UNSAT\x10\x02')
 
 
 
@@ -163,8 +163,8 @@ _REPLYMESSAGE_SATREPLYMESSAGE = descriptor.Descriptor(
   fields=[
     descriptor.FieldDescriptor(
       name='assignment', full_name='team_solver.ReplyMessage.SatReplyMessage.assignment', index=0,
-      number=1, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=unicode("", "utf-8"),
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),

@@ -171,21 +171,29 @@ class TcpCmdChannel(ICmdChannel):
     def _create_message(self, solver_result):
         reply_message = ReplyMessage()
         reply_message.cmdId = solver_result.unique_query.cmd_id
-        reply_message.stats.extend(solver_result.stats)
+        reply_message.stats.extend(self._serialize_stats(solver_result.stats))
         if solver_result.is_sat:
             reply_message.type = ReplyMessage.SAT #@UndefinedVariable
-            assignment = None
-            for a in solver_result.assignment:
-                if assignment == None:
-                    assignment = ''
-                else:
-                    assignment += '\n'
-                assignment += a + ' '
-                assignment += ','.join([str(_) for _ in solver_result.assignment[a]])
-            reply_message.sat.assignment = assignment
+            reply_message.sat.assignment.extend(self._serialize_assignment(solver_result.assignment))
         else:
             reply_message.type = ReplyMessage.UNSAT #@UndefinedVariable
         return reply_message
+
+    def _serialize_stats(self, solver_result_stats):
+        serialized = []
+        for s in solver_result_stats:
+            serialized.append(self._serialize_solver(s) + ': ' + solver_result_stats[s])
+        return serialized
+
+    def _serialize_solver(self, solver):
+        return getattr(solver, 'name', str(solver))
+
+    def _serialize_assignment(self, solver_result_assignment):
+        serialized = []
+        for a in solver_result_assignment:
+            serialized.append(a + ' ' + ','.join([str(_) for _ in solver_result_assignment[a]]))
+        return serialized
+
 #-----------------------------------------------------------------------------
     def _get_query(self, sock):
         return self._queries.get(sock, None)

@@ -5,13 +5,15 @@ Created on May 13, 2011
 '''
 
 class SolverResult:
-    def __init__(self, unique_query, is_sat, stats=[], assignment = None):
-        """ assignment is dict: arr_name -> [] of values """
+    def __init__(self, unique_query, is_sat, stats={}, assignment = None):
+        """ assignment is dict: arr_name -> [] of values
+            stats is dict: solver -> stats (str)
+        """
         self.unique_query = unique_query
         self.is_sat = is_sat
         if is_sat:
             self.assignment = assignment
-        self.stats = stats #TODO: 1: ah, what format?
+        self.stats = stats
 
 
 class UniqueQuery:

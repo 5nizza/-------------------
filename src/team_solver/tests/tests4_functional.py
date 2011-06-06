@@ -56,7 +56,7 @@ class Test(unittest.TestCase):
         self.client_func(port)
         team_solver.main.sigint_handler()
         server_g.join()
-        
+
     def test_new_cancel_new_cancel(self):
         port = 18982
         server_g = gevent.spawn(self.server_func, port)

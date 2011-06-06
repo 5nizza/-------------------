@@ -22,7 +22,7 @@ import gevent.socket
 
 def _empty(self, uniq_query):
     pass
-    
+
 class Test(unittest.TestCase):
 
     class CmdHandlerFunc(ICmdHandler):
@@ -143,7 +143,7 @@ class Test(unittest.TestCase):
             assert self.ev_new.wait(5)
             assert self.uniq_query != None
 
-            result = SolverResult(self.uniq_query, True, 'fake solver: 1212', {'arr':[0, 1, 2, 3]})
+            result = SolverResult(self.uniq_query, True, {'some solver': '1212'}, {'arr':[0, 1, 2, 3]})
             assert tcp_cmd_channel != None
             tcp_cmd_channel.send_result(result)
             common.recv_to_message(sock, ReplyMessage())

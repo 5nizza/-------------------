@@ -3,6 +3,8 @@ Created on May 24, 2011
 
 @author: art_haali
 '''
+from team_solver.common import ISolver
+
 
 STP_PATH = "/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp"
 Z3_PATH = "/home/art_haali/projects/smt-comparison/z3/bin/z3"
@@ -20,7 +22,7 @@ SAT_QUERY = r"""
 (exit)
 """
 SAT_QUERY_ASSIGNMENT = {'arr3_n_args_0x1acd8b0':[1, 0, 0, 0]}
-SAT_QUERY_ASSIGNMENT_SERIALIZED = 'arr3_n_args_0x1acd8b0 1,0,0,0'
+SAT_QUERY_ASSIGNMENT_SERIALIZED = ['arr3_n_args_0x1acd8b0 1,0,0,0']
 
 UNSAT_QUERY = r"""
 (set-logic QF_ABV)
@@ -78,8 +80,8 @@ def assert_sat_assignments(a1, a2):
 
 def assert_sat_ser_assignments(a1, a2):
     """ input: serialized assignments """
-    assert len(a1.strip().split("\n")) == len(a2.strip().split('\n'))
-    for a in a1.split("\n"):
+    assert len(a1) == len(a2), '{0} vs {1}'.format(len(a1), len(a2))
+    for a in a1:
         assert a in a2
 
 

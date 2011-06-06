@@ -57,7 +57,7 @@ class ProcessSolver(common.ISolver):
 
             parse_error, is_sat, assignment = self.parse_solver_reply(out)
             if parse_error == None:
-                callback = lambda: callbackOK(self, SolverResult(uniq_query, is_sat, [self._name + ": " + str(finish-start)], assignment))
+                callback = lambda: callbackOK(self, SolverResult(uniq_query, is_sat, {self: str(finish-start)}, assignment))
             else:
                 callback = lambda: callbackError(self, uniq_query, parse_error) #TODO: get rid of it?
         except GreenletExit:

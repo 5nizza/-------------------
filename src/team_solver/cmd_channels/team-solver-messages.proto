@@ -26,15 +26,15 @@ message ReplyMessage {
 		UNSAT = 2;
 	}
 
-	message SatReplyMessage { 
-		required string assignment = 1; //TODO: decide format
+	message SatReplyMessage {
+		repeated string assignment = 1;
 	}
 
 	message UnsatReplyMessage { }
-
+	
 	required Type type = 1;
 	required int32 cmdId = 2;
-	optional string stats = 5; //for portfolio - the only time, for benchmarking solver - different times
+	repeated string stats = 5; //for portfolio - the only time, for benchmarking solver - different times
 
 	optional SatReplyMessage sat = 3;
 	optional UnsatReplyMessage unsat = 4;
