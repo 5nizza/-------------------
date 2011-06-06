@@ -14,7 +14,7 @@ import utils.all
 import gevent
 import gevent.event
 
-#TODO: 1: ah, rename and test processor only
+#TODO: 2: ah, rename and test processor only
 class Test(unittest.TestCase):
     #TODO: help for 'strange thing: if main thread dies => this func return empty out'
     def test_cancel_hanged_solver(self):

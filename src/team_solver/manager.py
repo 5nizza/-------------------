@@ -60,6 +60,7 @@ class Manager(ICmdHandler):
         self._ev_next_query.set()
 
     def _on_solver_error(self, solver, uniq_query, error):
+        send error
         self._solver_is_busy = False
         self._ev_next_query.set()
 

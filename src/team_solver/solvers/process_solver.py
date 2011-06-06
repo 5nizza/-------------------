@@ -13,7 +13,7 @@ import gevent
 from gevent.hub import GreenletExit
 
 
-#TODO: 1: replace inheritance by input arg 'parser'
+#TODO: 1: replace inheritance by collaborator 'parser'?
 class ProcessSolver(common.ISolver):
     """ base class for external process based solvers """
 

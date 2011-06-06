@@ -20,6 +20,7 @@ from team_solver.solvers.portfolio_solver import PortfolioSolver
 from team_solver.solvers.benchmarking_solver import BenchmarkingSolver
 from team_solver.solvers.boolector_wrapper import BoolectorWrapper
 from team_solver.solvers.z3_wrapper import Z3Wrapper
+from team_solver.solvers.timed_solver import TimedSolver
 
 
 ev_stop = None
@@ -45,27 +46,28 @@ def main(argv):
     
     #TODO: 1: add sanity validations of input: port number, etc.
     parser = argparse.ArgumentParser(description='SMT Solver Server.')
-    parser.add_argument('-p', metavar='port', type=int, default=12345,
-                   help='listening port (default: %(default)i)')
-    
+    parser.add_argument('-p', metavar='port', dest = 'port', type=int, default=12345,
+                        help='listening port (default: %(default)i)')
+
     parser.add_argument('-b', 
                         dest="benchmark_mode",
                         action="store_true", 
                         default=False, 
-                        help='start in a benchmarking mode (default: %(default)i)') #TODO: 2: ah, boolean format
+                        help='start in a benchmarking mode (default: %(default)r)')
+    parser.add_argument('-timeout', metavar='timeout', dest = 'timeout', type=int, default=360,
+                        help='solving timeout(sec.) for a query (benchmarking mode only) (default: %(default)i)')
 
     parser.add_argument('-stp', metavar='stp-solver', type=str, 
                         dest = "stp_solvers",
                         nargs = "*",
                         default=[],
-#                        default = ["/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp --SMTLIB2 -p"],
-                        help='add stp solvers (cmds in quotes, separated by space, e.g.: "..../stp --SMTLIB2 -p")')
+                        help='add stp solvers (cmds in quotes, separated by space, e.g.: "..../stp --SMTLIB1 -p")')
 
     parser.add_argument('-z3', metavar='z3-solver', type=str,
                         dest = "z3_solvers",
                         nargs = "*",
                         default=[],
-                        help='add z3 solvers (cmd in quotes, separated by space, e.g.: "..../z3 -in -smt2 -m")')
+                        help='add z3 solvers (cmd in quotes, separated by space, e.g.: "..../z3 -in -smt -m")')
 
     parser.add_argument('-boolector', metavar='boolector-solver', type=str,
                         dest = "boolector_solvers",
@@ -74,17 +76,19 @@ def main(argv):
                         help='add boolector solvers (cmd in quotes, separated by space, e.g.: "..../boolector -m -d")')
 
     args = parser.parse_args(argv)
-    port = args.p
+
+    port = args.port
 
     stp_solvers = create_solvers(STPWrapper, args.stp_solvers)
     z3_solvers = create_solvers(Z3Wrapper, args.z3_solvers)
     boolector_solvers = create_solvers(BoolectorWrapper, args.boolector_solvers)
-
     all_solvers = stp_solvers + z3_solvers + boolector_solvers
+    print "Created {0} solvers to feed {1}".format(len(all_solvers),
+                                                   ['PortfolioSolver', 'BenchmarkingSolver'][args.benchmark_mode])
 
     solver = None
-    print "Created {0} solvers".format(len(all_solvers))
     if args.benchmark_mode:
+        solvers = [TimedSolver(s) for s in all_solvers]
         solver = BenchmarkingSolver(all_solvers)
     else:
         solver = PortfolioSolver(all_solvers)
@@ -93,7 +97,6 @@ def main(argv):
     man = Manager(solver, cmd_channel)
 
     man.start(ev_stop) #blocking
-
 
 if __name__ == '__main__':
     main(sys.argv[1:])

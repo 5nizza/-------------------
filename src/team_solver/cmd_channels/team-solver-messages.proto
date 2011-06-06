@@ -24,6 +24,7 @@ message ReplyMessage {
 	enum Type {
 		SAT = 1;
 		UNSAT = 2;
+		ERROR = 3; //TODO: 1: ah: remove?
 	}
 
 	message SatReplyMessage {
@@ -31,7 +32,11 @@ message ReplyMessage {
 	}
 
 	message UnsatReplyMessage { }
-	
+
+	message ErrorReplyMessage {
+		optional string desc = 1;
+	}
+
 	required Type type = 1;
 	required int32 cmdId = 2;
 	repeated string stats = 5; //for portfolio - the only time, for benchmarking solver - different times

@@ -5,6 +5,7 @@ Created on May 24, 2011
 '''
 from team_solver.common import ISolver
 
+#TODO: 1: ah, add run-all-tests.sh
 
 STP_PATH = "/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp"
 Z3_PATH = "/home/art_haali/projects/smt-comparison/z3/bin/z3"
@@ -84,5 +85,23 @@ def assert_sat_ser_assignments(a1, a2):
     for a in a1:
         assert a in a2
 
+def emptyCallbackOK(solver, solver_result):
+    pass
 
+def emptyCallbackError(solver, uniq_query, error_desc):
+    pass
 
+class MockSolver(ISolver):
+    
+    def solve_async(self, unique_query, callbackOK = emptyCallbackOK, callbackError = emptyCallbackError):
+        self._callbackOK = callbackOK
+        self._callbackError = callbackError
+
+    def cancel(self, uniq_query):
+        pass
+
+    def raise_solved(self, solver_result):
+        self._callbackOK(self, solver_result)
+        
+    def raise_error(self, uniq_query, error_desc):
+        self._callbackError(self, uniq_query, error_desc)

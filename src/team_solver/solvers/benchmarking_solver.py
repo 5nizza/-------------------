@@ -18,22 +18,38 @@ class BenchmarkingSolver(PortfolioSolver):
         self._stats = {}
         self._solved = 0
         self._errored = 0
+        self._solver_result = None
 
 #----------------------------------------------------------------------------
     def _on_solved(self, solver, solver_result):
+        self._solver_result = solver_result
         self._solved += 1
         self._stats.update(solver_result.stats)
-        if self._solved == len(self._PortfolioSolver__solvers):
+        if self._solved + self._errored == len(self._PortfolioSolver__solvers):
             solver_result.stats = self._stats
             self._PortfolioSolver__callbackOK(solver, solver_result)
             self._init_state()
 
-    def _on_error(self, solver, uniq_query, err_desc):
-        if self._errored > 0: #since s.cancel() causes context switching -> many greenlets can enter here
-            return
+    def _on_error(self, solver, uniq_query, err_desc): #also on timeout
         self._errored += 1
-        self._PortfolioSolver__cancel_others(solver)
-        self._PortfolioSolver__callbackError(solver, uniq_query, err_desc)
-        self._init_state()
+        self._stats.update({solver: err_desc})
+        if self._errored + self._solved == len(self._PortfolioSolver__solvers):
+            if self._solved > 0:
+                solver_result = self._solver_result
+                solver_result.stats = self._stats
+                self._PortfolioSolver__callbackOK(solver, solver_result)
+            else:
+                assert len(self._stats) == len(self._PortfolioSolver__solvers)
+                self._PortfolioSolver__callbackError(solver, uniq_query, self._errors_to_str(self._stats))
+            self._init_state()
+
+    def _errors_to_str(self, stats):
+        result = ''
+        for s in stats:
+            if result != '':
+                result += '\n'
+            result += stats[s]
+        return result
+
 
 

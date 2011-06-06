@@ -186,7 +186,7 @@ class TcpCmdChannel(ICmdChannel):
         return serialized
 
     def _serialize_solver(self, solver):
-        return getattr(solver, 'name', str(solver))
+        return getattr(solver, 'name', str(solver)) #TODO: ah: use __str__
 
     def _serialize_assignment(self, solver_result_assignment):
         serialized = []
