@@ -6,10 +6,10 @@ Created on May 13, 2011
 
 from sys import stderr
 
-from team_solver.common import ICmdChannel
-from team_solver.common import Cmd
-from team_solver.common import UniqueQuery
-from team_solver.common import SolverResult
+from team_solver.interfaces.interfaces import ICmdChannel
+from team_solver.interfaces.interfaces import Cmd
+from team_solver.interfaces.interfaces import UniqueQuery
+from team_solver.interfaces.interfaces import SolverResult
 from team_solver_messages_pb2  import CommandMessage
 from team_solver_messages_pb2 import ReplyMessage
 
@@ -25,7 +25,7 @@ import traceback
 
 import struct
 import socket as origin_socket
-import utils.all as utils
+import team_solver.utils.all as utils
 
 #Note on socket:
 #1. socket.recv: return ''

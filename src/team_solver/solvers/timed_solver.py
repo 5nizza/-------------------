@@ -1,7 +1,7 @@
-import utils.all
-from team_solver.common import ISolver
+import team_solver.utils.all
 
 import gevent
+from team_solver.interfaces.interfaces import ISolver
 
 class TimedSolver(ISolver):
     def __init__(self, solver, timeout=None):

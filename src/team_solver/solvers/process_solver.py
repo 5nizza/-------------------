@@ -1,20 +1,19 @@
 from gevent.event import Event
 
-import utils.subproc
+import team_solver.utils.subproc
 
 import sys
 import traceback
 import time
 
-from team_solver.common import SolverResult
+from team_solver.interfaces.interfaces import SolverResult, ISolver
 
-import team_solver.common as common
 import gevent
 from gevent.hub import GreenletExit
 
 
 #TODO: 1: replace inheritance by collaborator 'parser'?
-class ProcessSolver(common.ISolver):
+class ProcessSolver(ISolver):
     """ base class for external process based solvers """
 
     def __init__(self, cmd_path, cmd_options = []):
@@ -46,7 +45,7 @@ class ProcessSolver(common.ISolver):
     def _solve(self, uniq_query, callbackOK, callbackError):
         try:
             start = time.time()
-            returncode, out, err = utils.subproc.popen_communicate(self._cmd_args, uniq_query.query)
+            returncode, out, err = team_solver.utils.subproc.popen_communicate(self._cmd_args, uniq_query.query)
             if returncode < 0:
                 error_desc = "return code < 0: {0}\n stdout:\n{1}\n stderr:\n{2}".format(returncode, out, err)
                 callback = lambda: callbackError(self, uniq_query, error_desc)

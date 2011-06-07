@@ -5,11 +5,11 @@ Created on May 17, 2011
 '''
 
 import unittest
-import utils.all as utils
+import team_solver.utils.all as utils
 
 import common
-from team_solver.common import ICmdHandler
-from team_solver.common import SolverResult
+from team_solver.interfaces.interfaces import ICmdHandler
+from team_solver.interfaces.interfaces import SolverResult
 
 from team_solver.cmd_channels.tcp_cmd_channel import TcpCmdChannel
 from team_solver.cmd_channels.team_solver_messages_pb2  import CommandMessage

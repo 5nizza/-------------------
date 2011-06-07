@@ -3,16 +3,16 @@ import unittest
 from team_solver.solvers.benchmarking_solver import BenchmarkingSolver
 
 import common
-import team_solver.common
+import team_solver.interfaces.interfaces
 
-import utils.all
+import team_solver.utils.all
 
 import gevent
 import gevent.event
 
 import random
 from team_solver.tests.common import MockSolver
-from team_solver.common import SolverResult, UniqueQuery
+from team_solver.interfaces.interfaces import SolverResult, UniqueQuery
 from team_solver.solvers.stp_wrapper import STPWrapper
 
 

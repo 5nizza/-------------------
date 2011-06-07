@@ -1,6 +1,6 @@
 from team_solver.solvers.process_solver import ProcessSolver
 
-import utils.all
+import team_solver.utils.all
 
 class BoolectorWrapper(ProcessSolver):
     def __init__(self, cmd_path, cmd_options = []):
@@ -46,7 +46,7 @@ class BoolectorWrapper(ProcessSolver):
         except ValueError, e:
             return 'unknown format: {0}'.format(str(e)), None, None
 
-        return None, True, utils.all.arrs_to_assignment(arrs)
+        return None, True, team_solver.utils.all.arrs_to_assignment(arrs)
 
     @property
     def name(self):

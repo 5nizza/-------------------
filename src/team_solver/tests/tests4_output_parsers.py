@@ -7,9 +7,9 @@ import unittest
 from team_solver.solvers.stp_wrapper import STPWrapper
 
 import common
-import team_solver.common
+import team_solver.interfaces.interfaces
 
-import utils.all
+import team_solver.utils.all
 
 import gevent
 import gevent.event

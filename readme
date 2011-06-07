@@ -2,12 +2,15 @@ Setup PYTHONPATH to include ./src:
 . ./setup-env.sh
 
 Run server:
-./src/team_solver/main.py
+./src/team_solver/run_server.py
 
 Send query to the server:
-./src/team_solver/simple_client.py query.smt
-where query.smt should be in smt2 format
+./src/team_solver/send_query.py query.smt
+where query.smt should be in the same format as setup of solvers
 
 
 Dependencies:
+libevent
+greenlent
 gevent python module: http://www.gevent.org/
+

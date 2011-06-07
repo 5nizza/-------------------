@@ -50,9 +50,12 @@ def write_pipe(pipe, data):
 
 #TODO: strange thing: if main thread dies => this func return empty out
 def popen_communicate(args, data=''):
+    """Communicate with the process non-blockingly.
+    
+    Returns (returncode, stdout, stderr)
+    """
     p = None
     try:
-        """Communicate with the process non-blockingly."""
         p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
         fcntl.fcntl(p.stdin, fcntl.F_SETFL, os.O_NONBLOCK)
         fcntl.fcntl(p.stdout, fcntl.F_SETFL, os.O_NONBLOCK)
@@ -68,7 +71,7 @@ def popen_communicate(args, data=''):
         p.stderr.close()
 
         while p.poll() == None:
-            gevent.sleep(0.001) #switch to other greenlet, TODO: find other ways to do async wait in gevent
+            gevent.sleep(0.001) #switch to other greenlet, TODO: 1: find other ways to do async wait in gevent
 
         return (p.returncode, out, err)
     finally:

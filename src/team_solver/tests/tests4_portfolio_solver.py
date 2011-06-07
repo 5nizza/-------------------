@@ -8,9 +8,9 @@ from team_solver.solvers.stp_wrapper import STPWrapper
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 
 import common
-import team_solver.common
+import team_solver.interfaces.interfaces
 
-import utils.all
+import team_solver.utils.all
 
 import gevent
 import gevent.event
@@ -30,7 +30,7 @@ class Test(unittest.TestCase):
         def callbackError(uniq_query, err_desc): assert 0
 
         solver = PortfolioSolver(solvers)
-        uniq_query = team_solver.common.UniqueQuery(123, common.SAT_QUERY)
+        uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY)
         solver.solve_async(uniq_query, callbackOK, callbackError)
 
         assert ev_ok.wait(5)
@@ -64,7 +64,7 @@ class Test(unittest.TestCase):
 
         solver = PortfolioSolver(solvers)
         for _ in range(1, 10):
-            uniq_query = team_solver.common.UniqueQuery(123, common.SAT_QUERY)
+            uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY)
             solver.solve_async(uniq_query, callbackOK, callbackError)
             if random.random() > 1/2.:
                 ev_ok.wait() #since there should be no context sw -> we can call solve_async after this wait

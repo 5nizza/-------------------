@@ -4,10 +4,9 @@ Created on May 13, 2011
 @author: art_haali
 '''
 
-import utils.all
+import team_solver.utils.all
 
-from team_solver.common import Cmd
-from team_solver.common import ICmdHandler
+from team_solver.interfaces.interfaces import Cmd, ICmdHandler
 
 import gevent.event
 
@@ -26,7 +25,7 @@ class Manager(ICmdHandler):
         self._cmd_channel.start()
         print self.LOG_PREFIX, 'started'
         while True:
-            ev = utils.all.wait_any([ev_stop, self._ev_next_query])
+            ev = team_solver.utils.all.wait_any([ev_stop, self._ev_next_query])
             if ev == self._ev_next_query:
                 self._ev_next_query.clear()
                 self._schedule_next_query()
@@ -60,7 +59,7 @@ class Manager(ICmdHandler):
         self._ev_next_query.set()
 
     def _on_solver_error(self, solver, uniq_query, error):
-        send error
+        #TODO: 0: ah: send error
         self._solver_is_busy = False
         self._ev_next_query.set()
 

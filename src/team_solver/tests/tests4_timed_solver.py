@@ -6,14 +6,14 @@ Created on May 20, 2011
 import unittest
 
 import common
-import team_solver.common
+import team_solver.interfaces.interfaces
 
-import utils.all
+import team_solver.utils.all
 
 import gevent
 import gevent.event
 from team_solver.solvers.timed_solver import TimedSolver
-from team_solver.common import ISolver, UniqueQuery
+from team_solver.interfaces.interfaces import ISolver, UniqueQuery
 from team_solver.tests.common import MockSolver
 
 

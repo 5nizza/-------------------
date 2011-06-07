@@ -4,10 +4,10 @@ Created on May 26, 2011
 @author: art_haali
 '''
 
-import team_solver.common
 import sys
+from team_solver.interfaces.interfaces import ISolver
 
-class PortfolioSolver(team_solver.common.ISolver):
+class PortfolioSolver(ISolver):
     def __init__(self, solvers):
         self.__solvers = solvers
 

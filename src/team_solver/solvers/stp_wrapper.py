@@ -1,5 +1,5 @@
 from team_solver.solvers.process_solver import ProcessSolver
-import utils.all
+import team_solver.utils.all
 
 class STPWrapper(ProcessSolver):
     def __init__(self, cmd_path, cmd_options = []):
@@ -32,7 +32,7 @@ class STPWrapper(ProcessSolver):
             value = int(l.split('=')[1].replace(' );', '').strip(), 16)
             arrs[arr_name] = arrs.get(arr_name, {})
             arrs[arr_name][index] = value
-        return None, True, utils.all.arrs_to_assignment(arrs)
+        return None, True, team_solver.utils.all.arrs_to_assignment(arrs)
 
     @property
     def name(self):

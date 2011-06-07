@@ -8,12 +8,12 @@ import unittest
 import gevent
 import gevent.socket
 
-import team_solver.main
+import team_solver.run_server
 
 from team_solver.cmd_channels.team_solver_messages_pb2 import ReplyMessage
 
 import common
-import utils.all
+import team_solver.utils.all
 
 import signal
 
@@ -26,7 +26,7 @@ class Test(unittest.TestCase):
         solvers = []
         for _ in range(0, num_solvers):
             solvers.append(stp_args)
-        team_solver.main.main(['-p', str(port)] + server_args + ['-stp'] + solvers)
+        team_solver.run_server.main(['-p', str(port)] + server_args + ['-stp'] + solvers)
         print 'server_func: exit'
 
     def client_func(self, port, number_of_queries=1, random_close=False):

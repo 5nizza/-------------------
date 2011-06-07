@@ -1,6 +1,6 @@
 from team_solver.solvers.process_solver import ProcessSolver
 import re
-import utils.all
+import team_solver.utils.all
 
 class Z3Wrapper(ProcessSolver):
     def __init__(self, cmd_path, cmd_options = []):
@@ -58,7 +58,7 @@ class Z3Wrapper(ProcessSolver):
         except ValueError, e:
             return "unknown format: {0}".format(str(e)), None, None
 
-        return None, True, utils.all.arrs_to_assignment(arrs)
+        return None, True, team_solver.utils.all.arrs_to_assignment(arrs)
 
     def _get_arr_var(self, solver_out):
         arr_by_var = {}

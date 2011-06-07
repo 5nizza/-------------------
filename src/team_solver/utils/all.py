@@ -8,33 +8,40 @@ from gevent.event import AsyncResult
 import gevent.select
 import sys
 
+
 def arrs_to_assignment(arrs):
     """
-    input: {arr: {index: value}, ..}
-    output: arr_name[index] value
+    Input: {arr: {index: value}, ..}
+    Output: arr_name[index] value
     """
     #TODO: 0: ah: restore!
     return {}
 
-def wait_any(events, timeout=None):
+def wait_any(gevent_events, timeout=None):
     result = AsyncResult()
     update = result.set
     try:
-        for event in events:
+        for event in gevent_events:
             if event.ready():
                 return event
             else:
                 event.rawlink(update)
         return result.get(timeout=timeout)
     finally:
-        for event in events:
+        for event in gevent_events:
             event.unlink(update)
 
-def wrap_exc(exception_creater, desc, inner_exc):
+def wrap_exc(new_exc_creater, desc, exc_to_wrap):
+    """ Return (wrapped exception, None, original trace) """
     trace = sys.exc_info()[2]
-    return exception_creater("{0}: {1}".format(desc, inner_exc)), None, trace
+    return new_exc_creater("{0}: {1}".format(desc, exc_to_wrap)), None, trace
 
 def recv_size(sock, size, cancel_obj = None): #TODO: optimizations: use lengths of ^2, decrease number of generated strings
+    """ Return:
+        string of requested size
+        or '' in case of EOF
+        or None if cancelled
+    """
     remained = size
     result = ''
     objects_to_wait = [sock]
@@ -42,7 +49,7 @@ def recv_size(sock, size, cancel_obj = None): #TODO: optimizations: use lengths 
         objects_to_wait.append(cancel_obj)
     while remained != 0:
         ready_to_read, _, __ =  gevent.select.select(objects_to_wait, [], [])
-        
+
         if cancel_obj in ready_to_read:
             return None
 

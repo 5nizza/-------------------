@@ -3,7 +3,7 @@ Created on May 24, 2011
 
 @author: art_haali
 '''
-from team_solver.common import ISolver
+from team_solver.interfaces.interfaces import ISolver
 
 #TODO: 1: ah, add run-all-tests.sh
 
@@ -42,7 +42,7 @@ from team_solver.cmd_channels.team_solver_messages_pb2  import CommandMessage
 from team_solver.cmd_channels.team_solver_messages_pb2 import ReplyMessage
 
 import struct
-import utils.all
+import team_solver.utils.all
 
 last_id = 0
 
@@ -68,8 +68,8 @@ def send_cancel_query(sock, cmd_id):
 
 #TODO: extract common functions, use them in cmd_channel
 def recv_to_message(sock, mes, ev_cancel=None):
-    mes_size = struct.unpack("I", utils.all.recv_size(sock, 4))[0]
-    message_as_string = utils.all.recv_size(sock, mes_size, ev_cancel)
+    mes_size = struct.unpack("I", team_solver.utils.all.recv_size(sock, 4))[0]
+    message_as_string = team_solver.utils.all.recv_size(sock, mes_size, ev_cancel)
     mes.ParseFromString(message_as_string)
 
 def assert_sat_assignments(a1, a2):
