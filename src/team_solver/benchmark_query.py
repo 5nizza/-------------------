@@ -23,13 +23,12 @@ class SyncSolver:
     def __init__(self, solver, timeout):
         self._timeout = timeout
         self._solver = solver
-        
+
     def solve(self, uniq_query):
         self._done = gevent.event.Event()
         self._result = None
         self._solver.solve_async(uniq_query, self._callbackOK, self._callbackError)
-        self._done.wait()
-        if not self._done.is_set():
+        if not self._done.wait(self._timeout):
             self._solver.cancel()
             self._result = SolverResult(False, 'timeout')
         return self._result
@@ -97,7 +96,7 @@ def main(argv):
 
     parser.add_argument('-timeout',
                         metavar='timeout',
-                        type=int,
+                        type=float,
                         default=120,
                         nargs= "?",
                         help='time limit(sec) for each solver (default: %(default)i)')
@@ -105,7 +104,6 @@ def main(argv):
     add_solvers_args_to_parser(parser)
 
     args = parser.parse_args(argv)
-    print args
 
     timeout = args.timeout
 

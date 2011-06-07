@@ -47,7 +47,8 @@ class ICmdChannel:
 
 class ISolver:
     def solve_async(self, unique_query, callbackOK, callbackError):
-        """ callbackOK(solver, solver_result)
+        """ Input:
+            callbackOK(solver, solver_result)
             callbackError(solver, uniq_query, error_desc)
         """
         raise NotImplementedError()
