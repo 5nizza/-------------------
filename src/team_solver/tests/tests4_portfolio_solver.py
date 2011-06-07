@@ -20,7 +20,7 @@ import random
 
 class Test(unittest.TestCase):
 
-    def do_sat_test(self, solvers):
+    def _do_sat_test(self, solvers):
         ev_ok = gevent.event.Event()
         def callbackOK(s, solver_result):
             assert not ev_ok.is_set()
@@ -38,12 +38,12 @@ class Test(unittest.TestCase):
     def test_sat_query(self):
         solver1 = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
         solver2 = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
-        self.do_sat_test([solver1, solver2])
+        self._do_sat_test([solver1, solver2])
 
     def test_one_solver_hanged(self):
         solver1 = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
         solver2 = STPWrapper("python", ["-c", "while True: pass"])
-        self.do_sat_test([solver1, solver2])
+        self._do_sat_test([solver1, solver2])
 
     def test_sat_stress_test(self):
         ev_ok = gevent.event.Event()

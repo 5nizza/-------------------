@@ -32,7 +32,7 @@ class STPWrapper(ProcessSolver):
             value = int(l.split('=')[1].replace(' );', '').strip(), 16)
             arrs[arr_name] = arrs.get(arr_name, {})
             arrs[arr_name][index] = value
-        return None, True, team_solver.utils.all.arrs_to_assignment(arrs)
+        return None, True, arrs
 
     @property
     def name(self):

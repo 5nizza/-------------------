@@ -42,10 +42,10 @@ class Z3Wrapper(ProcessSolver):
 #arr3_0x1ca21c0 37,48
 #arr4_0x1c9c2c0 1,0,0,0
 
-        arrname_by_var = self._get_arr_var(solver_out)
-        arrs = {}
-        cur_arr = None
         try:
+            arrname_by_var = self._get_arr_var(solver_out)
+            arrs = {}
+            cur_arr = None
             for l in solver_out.split('\n'):
                 l = l.strip()
                 if l.startswith('(define ('):
@@ -55,10 +55,11 @@ class Z3Wrapper(ProcessSolver):
                     assert cur_arr != None
                     index, value = [int(_) for _ in re.findall('bv([0-9]+)', l)]
                     cur_arr[index] = value
+
+            return None, True, arrs
+        
         except ValueError, e:
             return "unknown format: {0}".format(str(e)), None, None
-
-        return None, True, team_solver.utils.all.arrs_to_assignment(arrs)
 
     def _get_arr_var(self, solver_out):
         arr_by_var = {}

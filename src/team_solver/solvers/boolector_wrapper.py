@@ -46,7 +46,7 @@ class BoolectorWrapper(ProcessSolver):
         except ValueError, e:
             return 'unknown format: {0}'.format(str(e)), None, None
 
-        return None, True, team_solver.utils.all.arrs_to_assignment(arrs)
+        return None, True, arrs
 
     @property
     def name(self):

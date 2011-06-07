@@ -191,28 +191,30 @@ class TcpCmdChannel(ICmdChannel):
     def _serialize_assignment(self, solver_result_assignment):
         serialized = []
         for a in solver_result_assignment:
-            serialized.append(a + ' ' + ','.join([str(_) for _ in solver_result_assignment[a]]))
+            arr_name = a
+            for index in solver_result_assignment[a]:
+                serialized.append('{0}[{1}]={2}'.format(arr_name, index, solver_result_assignment[a][index]))
         return serialized
 
 #-----------------------------------------------------------------------------
     def _get_query(self, sock):
         return self._queries.get(sock, None)
-    
+
     def _get_sock(self, query):
         return self._socks.get(query, None)
-    
+
     def _del_query(self, query):
         sock = self._socks[query]
         del self._queries[sock]
         del self._socks[query]
-        
+
     def _add_query(self, query, sock):
         assert sock not in self._queries
         self._queries[sock] = query
         self._socks[query] = sock
-        
-        
-        
+
+
+
         
         
         

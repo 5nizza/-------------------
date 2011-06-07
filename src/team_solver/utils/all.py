@@ -9,14 +9,6 @@ import gevent.select
 import sys
 
 
-def arrs_to_assignment(arrs):
-    """
-    Input: {arr: {index: value}, ..}
-    Output: arr_name[index] value
-    """
-    #TODO: 0: ah: restore!
-    return {}
-
 def wait_any(gevent_events, timeout=None):
     result = AsyncResult()
     update = result.set

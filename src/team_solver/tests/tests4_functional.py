@@ -54,7 +54,7 @@ class Test(unittest.TestCase):
         server_g = gevent.spawn(self.server_func, port)
         gevent.sleep(1) #ensure server starts
         self.client_func(port)
-        team_solver.main.sigint_handler()
+        team_solver.run_server.sigint_handler()
         server_g.join()
 
     def test_new_cancel_new_cancel(self):
@@ -71,7 +71,7 @@ class Test(unittest.TestCase):
         id = common.send_new_query(sock, common.SAT_QUERY)
         common.send_cancel_query(sock, id)
 
-        team_solver.main.sigint_handler()
+        team_solver.run_server.sigint_handler()
         server_g.join()
         
     def test_stress_portfolio(self):
@@ -85,7 +85,7 @@ class Test(unittest.TestCase):
             greenlets.append(g)
         gevent.joinall(greenlets)
 
-        team_solver.main.sigint_handler()
+        team_solver.run_server.sigint_handler()
         server_g.join()
 
 if __name__ == "__main__":

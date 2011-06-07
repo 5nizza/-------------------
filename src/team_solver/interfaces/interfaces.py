@@ -6,7 +6,7 @@ Created on May 13, 2011
 
 class SolverResult:
     def __init__(self, unique_query, is_sat, stats={}, assignment = None):
-        """ assignment is dict: arr_name -> [] of values
+        """ assignment is dict: arr_name -> {dict index->value}
             stats is dict: solver -> stats (str)
         """
         self.unique_query = unique_query

@@ -5,8 +5,6 @@ Created on May 24, 2011
 '''
 from team_solver.interfaces.interfaces import ISolver
 
-#TODO: 1: ah, add run-all-tests.sh
-
 STP_PATH = "/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp"
 Z3_PATH = "/home/art_haali/projects/smt-comparison/z3/bin/z3"
 
@@ -22,8 +20,11 @@ SAT_QUERY = r"""
 (check-sat)
 (exit)
 """
-SAT_QUERY_ASSIGNMENT = {'arr3_n_args_0x1acd8b0':[1, 0, 0, 0]}
-SAT_QUERY_ASSIGNMENT_SERIALIZED = ['arr3_n_args_0x1acd8b0 1,0,0,0']
+SAT_QUERY_ASSIGNMENT = {'arr3_n_args_0x1acd8b0':{0:1, 1:0, 2:0, 3:0}}
+SAT_QUERY_ASSIGNMENT_SERIALIZED = ['arr3_n_args_0x1acd8b0[0]=1',
+                                   'arr3_n_args_0x1acd8b0[1]=0',
+                                   'arr3_n_args_0x1acd8b0[2]=0',
+                                   'arr3_n_args_0x1acd8b0[3]=0']
 
 UNSAT_QUERY = r"""
 (set-logic QF_ABV)
@@ -73,14 +74,16 @@ def recv_to_message(sock, mes, ev_cancel=None):
     mes.ParseFromString(message_as_string)
 
 def assert_sat_assignments(a1, a2):
-    """ input: a: dict: arr_name -> [] of values """
+    """ input: {arr_name -> { index->value} } """
     assert len(a1) == len(a2), '{0} vs {1}'.format(len(a1), len(a2))
-    for a in a1:
-        assert a in a2
-        assert a1[a] == a2[a], '{0} vs {1}'.format(a1[a], a2[a])
+    for arr_name in a1:
+        assert arr_name in a2
+        assert a1[arr_name] == a2[arr_name], '{0} vs {1}'.format(a1[arr_name], a2[arr_name])
 
-def assert_sat_ser_assignments(a1, a2):
+def assert_sat_ser_assignments(ser_a1, ser_a2):
     """ input: serialized assignments """
+    a1 = ser_a1
+    a2 = ser_a2
     assert len(a1) == len(a2), '{0} vs {1}'.format(len(a1), len(a2))
     for a in a1:
         assert a in a2
