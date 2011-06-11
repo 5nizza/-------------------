@@ -1,23 +1,21 @@
 from team_solver.solvers.process_solver import ProcessSolver
 
-import team_solver.utils.all
-
 class BoolectorWrapper(ProcessSolver):
-    def __init__(self, cmd_path, cmd_options = []):
+    def __init__(self, cmd_path, cmd_options = ()):
         #TODO: 1: ah, check that this options are set (for parsing): -m -d
         ProcessSolver.__init__(self, cmd_path, cmd_options)
         self._name = 'Boolector: ({0})'.format(cmd_options)
 
-    def parse_solver_reply(self, solver_out):
-        if solver_out == None or solver_out.strip() == '':
+    def parse_solver_reply(self, solver_out, solver_err):
+        if solver_out is None or solver_out.strip() == '':
             return "parse error: solver output is empty", None, None
 
-        splitted = filter(lambda s: s!='', [s.strip() for s in solver_out.split('\n')])
-        if len(splitted) < 1:
+        split = filter(lambda s: s!='', [s.strip() for s in solver_out.split('\n')])
+        if len(split) < 1:
             return "couldn't get status (sat/unsat)", None, None
-        if splitted[0] == 'unsat':
+        if split[0] == 'unsat':
             return None, False, None
-        elif splitted[0] != 'sat':
+        elif split[0] != 'sat':
             return 'unknown format for status', None, None
 
 #        sat
@@ -34,7 +32,7 @@ class BoolectorWrapper(ProcessSolver):
 
         try:
             arrs = {}
-            for l in splitted:
+            for l in split:
                 if '[' not in l:
                     continue
                 l = l.strip()

@@ -1,12 +1,13 @@
-'''
+"""
 Created on May 13, 2011
 
 @author: art_haali
-'''
+"""
+from sys import stderr
 
 import team_solver.utils.all
 
-from team_solver.interfaces.interfaces import Cmd, ICmdHandler
+from team_solver.interfaces.interfaces import ICmdHandler
 
 import gevent.event
 
@@ -45,7 +46,7 @@ class Manager(ICmdHandler):
         if uniq_query in self._queries:
             self._queries.remove(uniq_query)
         else:
-            if self._solver_is_busy == False:  #client doesn't know yet that the query has already been processed
+            if not self._solver_is_busy:  #client doesn't know yet that the query has already been processed
                 return
 
             self._solver.cancel() #context switching call
@@ -53,6 +54,8 @@ class Manager(ICmdHandler):
             self._ev_next_query.set()
 
 #---SolverHandler--------------------------------------------------------------
+
+    #noinspection PyUnusedLocal
     def _on_solver_ok(self, solver, solver_result):
         self._cmd_channel.send_result(solver_result) #context switching call(?)
         self._solver_is_busy = False #TODO: ah, get rid of
@@ -60,6 +63,7 @@ class Manager(ICmdHandler):
 
     def _on_solver_error(self, solver, uniq_query, error):
         #TODO: 0: ah: send error
+        print >>stderr, 'error in solver: {0}\n{1}\n query{2}'.format(solver.name, error, uniq_query)
         self._solver_is_busy = False
         self._ev_next_query.set()
 

@@ -1,11 +1,11 @@
-'''
+"""
 Created on May 13, 2011
 
 @author: art_haali
-'''
+"""
 
 class SolverResult:
-    def __init__(self, unique_query, is_sat, stats={}, assignment = None):
+    def __init__(self, unique_query, is_sat, stats_dict=None, assignment=None):
         """ assignment is dict: arr_name -> {dict index->value}
             stats is dict: solver -> stats (str)
         """
@@ -13,7 +13,7 @@ class SolverResult:
         self.is_sat = is_sat
         if is_sat:
             self.assignment = assignment
-        self.stats = stats
+        self.stats = stats_dict if stats_dict is not None else {}
 
 
 class UniqueQuery:
@@ -52,6 +52,6 @@ class ISolver:
             callbackError(solver, uniq_query, error_desc)
         """
         raise NotImplementedError()
-    def cancel(self, unique_query):
+    def cancel(self):
         raise NotImplementedError()
 

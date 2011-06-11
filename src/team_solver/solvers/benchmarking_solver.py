@@ -1,10 +1,9 @@
-'''
+"""""
 Created on May 26, 2011
 
 @author: art_haali
-'''
+"""""
 
-import sys
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 
 class BenchmarkingSolver(PortfolioSolver):

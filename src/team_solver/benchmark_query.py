@@ -2,13 +2,9 @@
 
 import gevent.event
 import sys
-import os
 import argparse
 
 import team_solver.utils.subproc
-from team_solver.solvers.stp_wrapper import STPWrapper
-from team_solver.solvers.z3_wrapper import Z3Wrapper
-from team_solver.solvers.boolector_wrapper import BoolectorWrapper
 from team_solver.interfaces.interfaces import UniqueQuery
 
 from team_solver.utils.cmd_line import add_solvers_args_to_parser, create_solvers_from_args
@@ -38,11 +34,11 @@ class SyncSolver:
         return self._solver.name
 
     def _callbackOK(self, solver, solver_result):
-        self._result = SolverResult(True, None, solver_result.stats[self._solver])
+        self._result = SolverResult(True, None, solver_result.stats[solver])
         self._done.set()
 
     def _callbackError(self, solver, uniq_query, error_desc):
-        self._result = SolverResult(False, error_desc)
+        self._result = SolverResult(False, 'error in solver {0}: \n{1} \n query: {2}'.format(solver.name, error_desc, uniq_query))
         self._done.set()
 
 class KleeToSmtQueryConverter:
@@ -107,12 +103,11 @@ def main(argv):
 
     timeout = args.timeout
 
-    klee_query = None
     with open(args.klee_query_file) as f:
         klee_query = f.read()
 
-    assert klee_query != None and klee_query != ''
-    assert args.converter_cmd != None and args.converter_cmd != '' 
+    assert klee_query is not None and klee_query != ''
+    assert args.converter_cmd is not None and args.converter_cmd != ''
 
     #create converter
     converter = KleeToSmtQueryConverter(args.converter_cmd.split()[0], args.converter_cmd.split()[1:])
@@ -124,7 +119,7 @@ def main(argv):
 
     #convert, solve
     smt1_query = converter.convert(klee_query)
-    if smt1_query != None:
+    if smt1_query is not None:
         results = solver.solve(smt1_query)
         for r in results:
             print r.name, ": ", results[r].ok, ", time: ", results[r].time, ", error: ", results[r].error

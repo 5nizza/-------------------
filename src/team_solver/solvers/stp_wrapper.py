@@ -1,13 +1,13 @@
 from team_solver.solvers.process_solver import ProcessSolver
-import team_solver.utils.all
 
 class STPWrapper(ProcessSolver):
-    def __init__(self, cmd_path, cmd_options = []):
+    def __init__(self, cmd_path, cmd_options=()):
+        
         ProcessSolver.__init__(self, cmd_path, cmd_options)
         self._name = 'STP: ({0})'.format(cmd_options)
 
-    def parse_solver_reply(self, solver_out):
-        if solver_out == None or solver_out.strip() == '':
+    def parse_solver_reply(self, solver_out, solver_err):
+        if solver_out is None or solver_out.strip() == '':
             return "parse error: solver output is empty", None, None
 
         lines = [x.strip() for x in solver_out.split("\n") if x != '']

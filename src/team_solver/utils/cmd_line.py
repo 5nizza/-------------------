@@ -1,8 +1,8 @@
-'''
+"""""
 Created on Jun 7, 2011
 
 @author: art_haali
-'''
+"""""
 from team_solver.solvers.stp_wrapper import STPWrapper
 from team_solver.solvers.z3_wrapper import Z3Wrapper
 from team_solver.solvers.boolector_wrapper import BoolectorWrapper
@@ -20,8 +20,7 @@ def create_solvers_from_args(args):
     return stp_wrappers + z3_wrappers + boolector_wrappers
 
 def add_solvers_args_to_parser(parser):
-    solvers_group = parser
-    parser.add_argument('-stp', metavar='stp-solver', type=str, 
+    parser.add_argument('-stp', metavar='stp-solver', type=str,
                         dest = "stp_solvers",
                         nargs = "*",
                         default=[],

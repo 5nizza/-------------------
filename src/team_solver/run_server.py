@@ -1,35 +1,29 @@
 #!/usr/bin/env python
-'''
-Created on May 12, 2011
-
-@author: art_haali
-'''
 
 import argparse
 import sys
 import signal
 
+import gevent
 import gevent.event
 
 from team_solver.manager.manager import Manager
 
 from team_solver.cmd_channels.tcp_cmd_channel import TcpCmdChannel
 
-from team_solver.solvers.stp_wrapper import STPWrapper
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 from team_solver.solvers.benchmarking_solver import BenchmarkingSolver
-from team_solver.solvers.boolector_wrapper import BoolectorWrapper
-from team_solver.solvers.z3_wrapper import Z3Wrapper
 from team_solver.solvers.timed_solver import TimedSolver
 from team_solver.utils.cmd_line import add_solvers_args_to_parser,\
     create_solvers_from_args
 
 
 ev_stop = None
+#noinspection PyUnusedLocal
 def sigint_handler(_=None, __=None):
     print 'received Ctr+C'
     ev_stop.set()
-def work_around_infinite_wait(): # we need some active greenlet, since gevent hangs into wait/waitany functions and doesn't call signal_handler
+def work_around_infinite_wait(): # we need some active greenlet, since gevent hangs into wait/wait_any functions and doesn't call signal_handler
     while True:
         if ev_stop.wait(0.5):
             break
@@ -69,10 +63,9 @@ def main(argv):
         print 'Provide input solvers.'
         return
 
-    solver = None
     if args.benchmark_mode:
         solvers = [TimedSolver(s) for s in all_solvers]
-        solver = BenchmarkingSolver(all_solvers)
+        solver = BenchmarkingSolver(solvers)
     else:
         solver = PortfolioSolver(all_solvers)
 

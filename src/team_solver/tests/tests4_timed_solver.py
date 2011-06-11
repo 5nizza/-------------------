@@ -1,23 +1,28 @@
-'''
-Created on May 20, 2011
-
-@author: art_haali
-'''
 import unittest
 
-import common
-import team_solver.interfaces.interfaces
-
-import team_solver.utils.all
 
 import gevent
 import gevent.event
 from team_solver.solvers.timed_solver import TimedSolver
-from team_solver.interfaces.interfaces import ISolver, UniqueQuery
+from team_solver.interfaces.interfaces import UniqueQuery, SolverResult
+from team_solver.tests import common
 from team_solver.tests.common import MockSolver
 
 
 class Test(unittest.TestCase):
+    def test_without_timeout(self):
+        ev_ok = gevent.event.Event()
+        def callbackOK(_, solver_result): ev_ok.set()
+        def callbackError(_, uniq_query, err_desc): assert 0
+
+        mock_solver = MockSolver()
+        solver = TimedSolver(mock_solver)
+        uniq_query = UniqueQuery(123, common.SAT_QUERY)
+        solver.solve_async(uniq_query, callbackOK, callbackError)
+        mock_solver.raise_solved(SolverResult(uniq_query, False))
+        assert ev_ok.wait(5)
+        #no exceptions
+
     def test_timeout(self):
         ev_error = gevent.event.Event()
         def callbackOK(_, solver_result): assert 0

@@ -1,8 +1,8 @@
-'''
+"""""
 Created on May 24, 2011
 
 @author: art_haali
-'''
+"""""
 from team_solver.interfaces.interfaces import ISolver
 
 STP_PATH = "/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp"
@@ -40,14 +40,14 @@ UNSAT_QUERY = r"""
 """
 
 from team_solver.cmd_channels.team_solver_messages_pb2  import CommandMessage
-from team_solver.cmd_channels.team_solver_messages_pb2 import ReplyMessage
 
 import struct
 import team_solver.utils.all
 
 last_id = 0
 
-def send_new_query(sock, query=SAT_QUERY):
+#noinspection PyUnresolvedReferences
+def send_new_query(sock, query):
     global last_id
     mes = CommandMessage()
     mes.type = CommandMessage.NEW_QUERY
@@ -59,6 +59,7 @@ def send_new_query(sock, query=SAT_QUERY):
     sock.sendall(new_query_mes_as_string)
     return mes.cmdId
 
+#noinspection PyUnresolvedReferences
 def send_cancel_query(sock, cmd_id):
     cancel_query_mes = CommandMessage()
     cancel_query_mes.type = CommandMessage.CANCEL_QUERY
@@ -100,7 +101,7 @@ class MockSolver(ISolver):
         self._callbackOK = callbackOK
         self._callbackError = callbackError
 
-    def cancel(self, uniq_query):
+    def cancel(self):
         pass
 
     def raise_solved(self, solver_result):

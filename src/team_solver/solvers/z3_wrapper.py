@@ -1,15 +1,14 @@
 from team_solver.solvers.process_solver import ProcessSolver
 import re
-import team_solver.utils.all
 
 class Z3Wrapper(ProcessSolver):
-    def __init__(self, cmd_path, cmd_options = []):
+    def __init__(self, cmd_path, cmd_options = ()):
         ProcessSolver.__init__(self, cmd_path, cmd_options)
         self._name = 'Z3: ({0})'.format(cmd_options)
         self._var_re = re.compile("(k![0-9]+)")
 
-    def parse_solver_reply(self, solver_out):
-        if solver_out == None or solver_out.strip() == '':
+    def parse_solver_reply(self, solver_out, solver_err):
+        if solver_out is None or solver_out.strip() == '':
             return "parse error: solver output is empty", None, None
 
         if solver_out.split()[-1] == 'unsat':
@@ -52,7 +51,7 @@ class Z3Wrapper(ProcessSolver):
                     var_name = self._var_re.search(l).groups()[0]
                     arrs[arrname_by_var[var_name]] = cur_arr = {}
                 if l.startswith('(if'):
-                    assert cur_arr != None
+                    assert cur_arr is not None
                     index, value = [int(_) for _ in re.findall('bv([0-9]+)', l)]
                     cur_arr[index] = value
 

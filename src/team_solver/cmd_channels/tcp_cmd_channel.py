@@ -1,25 +1,21 @@
-'''
+"""
 Created on May 13, 2011
 
 @author: art_haali
-'''
+"""
 
 from sys import stderr
 
 from team_solver.interfaces.interfaces import ICmdChannel
-from team_solver.interfaces.interfaces import Cmd
 from team_solver.interfaces.interfaces import UniqueQuery
-from team_solver.interfaces.interfaces import SolverResult
 from team_solver_messages_pb2  import CommandMessage
 from team_solver_messages_pb2 import ReplyMessage
 
-from gevent.event import Event
 from gevent.server import StreamServer
 from gevent.socket import socketpair
 from google.protobuf.message import DecodeError
 
 import gevent
-import errno
 
 import traceback
 
@@ -35,7 +31,7 @@ class TcpCmdChannel(ICmdChannel):
     LOG_PREFIX = 'TcpCmdChannel: '
     def __init__(self, local_address, local_port, cmd_handler = None):
         self._cmd_handler = cmd_handler
-        self._streamserver = StreamServer((local_address, local_port), self._accept, spawn = self._spawn_hook)
+        self._stream_server = StreamServer((local_address, local_port), self._accept, spawn = self._spawn_hook)
         self._stop = False
         self._ev_stop_getter, self._ev_stop_setter = socketpair()
         self._acceptors = []
@@ -45,7 +41,8 @@ class TcpCmdChannel(ICmdChannel):
     def __enter__(self):
         self.start()
         return self
-    
+
+    #noinspection PyUnusedLocal
     def __exit__(self, type, value, traceback):
         ok = self.stop()
         assert ok
@@ -61,21 +58,21 @@ class TcpCmdChannel(ICmdChannel):
         self._cmd_handler = cmd_handler
 
     def start(self):
-        assert self._cmd_handler != None
+        assert self._cmd_handler is not None
         assert self._stop == False
-        self._streamserver.start()
-        print self.LOG_PREFIX, "started on {0}".format(self._streamserver.address)
+        self._stream_server.start()
+        print self.LOG_PREFIX, "started on {0}".format(self._stream_server.address)
 
-    def stop(self, timeout = None):
+    def stop(self):
         self._stop = True
-        self._streamserver.stop()
+        self._stream_server.stop()
         self._ev_stop_setter.send("game over")
-        gevent.greenlet.joinall(self._acceptors, timeout) #TOOD: use timeout, but how to check timeout expire?
+        gevent.greenlet.joinall(self._acceptors) #TOOD: use timeout, but how to check timeout expire?
         return len(self._acceptors) == 0
 
     def send_result(self, solver_result):
         sock = self._get_sock(solver_result.unique_query) 
-        if sock != None:
+        if sock is not None:
             reply_message = self._create_message(solver_result)
             self._del_query(solver_result.unique_query)
             self._send_message(reply_message, sock)
@@ -91,10 +88,10 @@ class TcpCmdChannel(ICmdChannel):
                 message = self._read_message(socket) #TODO: 2: optimize: if there is data in buffer, but connection was reset we still continue to read it: discard it!
                 if self._stop:
                     break
-                if message == None: #client disconnected
+                if message is None: #client disconnected
                     self._cancel_query_on_socket(socket)
                     break
-                
+
                 if message.type == CommandMessage.NEW_QUERY:
                     self._new_query_on_socket(message.cmdId, message.newQuery.query, socket)
                 elif message.type == CommandMessage.CANCEL_QUERY:
@@ -117,13 +114,13 @@ class TcpCmdChannel(ICmdChannel):
 
     def _cancel_query_on_socket(self, sock):
         uniq_query = self._get_query(sock)
-        if uniq_query != None:
+        if uniq_query is not None:
             self._del_query(uniq_query)
             self._cmd_handler.on_cancel_query(uniq_query)
 
     def _new_query_on_socket(self, cmdId, query, sock):
         uniq_query = UniqueQuery(cmdId, query)
-        assert self._get_query(sock) == None, 'one active query per client at a time'
+        assert self._get_query(sock) is None, 'one active query per client at a time'
         
         self._add_query(uniq_query, sock)
         self._cmd_handler.on_new_query(uniq_query)
@@ -165,9 +162,10 @@ class TcpCmdChannel(ICmdChannel):
         try:
             sock.sendall(header)
             sock.sendall(message_as_string)
-        except origin_socket.error, e:
+        except origin_socket.error:
             print traceback.format_exc() #TODO: separate cases of connection reset (econnreset, epipe..) from other errors
 
+    #noinspection PyUnresolvedReferences
     def _create_message(self, solver_result):
         reply_message = ReplyMessage()
         reply_message.cmdId = solver_result.unique_query.cmd_id
@@ -198,10 +196,10 @@ class TcpCmdChannel(ICmdChannel):
 
 #-----------------------------------------------------------------------------
     def _get_query(self, sock):
-        return self._queries.get(sock, None)
+        return self._queries.get(sock)
 
     def _get_sock(self, query):
-        return self._socks.get(query, None)
+        return self._socks.get(query)
 
     def _del_query(self, query):
         sock = self._socks[query]

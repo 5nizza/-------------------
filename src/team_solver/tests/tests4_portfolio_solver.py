@@ -1,13 +1,14 @@
-'''
+"""""
 Created on May 20, 2011
 
 @author: art_haali
-'''
+"""""
 import unittest
 from team_solver.solvers.stp_wrapper import STPWrapper
 from team_solver.solvers.portfolio_solver import PortfolioSolver
+from team_solver.tests import common
 
-import common
+import team_solver.tests.common
 import team_solver.interfaces.interfaces
 
 import team_solver.utils.all
@@ -27,7 +28,7 @@ class Test(unittest.TestCase):
             assert solver_result.is_sat
             common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT)
             ev_ok.set()
-        def callbackError(uniq_query, err_desc): assert 0
+        def callbackError(solver, uniq_query, err_desc): assert 0
 
         solver = PortfolioSolver(solvers)
         uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY)
@@ -52,7 +53,7 @@ class Test(unittest.TestCase):
             assert solver_result.is_sat
             common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT)
             ev_ok.set()
-        def callbackError(uniq_query, err_desc): assert 0
+        def callbackError(solver, uniq_query, err_desc): assert 0
 
         solvers = []
         for _ in range(1, 20):

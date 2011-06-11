@@ -1,8 +1,8 @@
-'''
+"""
 Created on May 24, 2011
 
 @author: art_haali
-'''
+"""
 import unittest
 
 import gevent
@@ -12,21 +12,19 @@ import team_solver.run_server
 
 from team_solver.cmd_channels.team_solver_messages_pb2 import ReplyMessage
 
-import common
+import team_solver.tests.common as common
 import team_solver.utils.all
-
-import signal
 
 import random
 
 #TODO: 1: ah: need to setup solvers paths
 class Test(unittest.TestCase):
-    def server_func(self, port, num_solvers=2, server_args = []):
+    def server_func(self, port, num_solvers=2, server_args = ()):
         stp_args = common.STP_PATH + " --SMTLIB2 -p"
         solvers = []
         for _ in range(0, num_solvers):
             solvers.append(stp_args)
-        team_solver.run_server.main(['-p', str(port)] + server_args + ['-stp'] + solvers)
+        team_solver.run_server.main(['-p', str(port)] + list(server_args) + ['-stp'] + solvers)
         print 'server_func: exit'
 
     def client_func(self, port, number_of_queries=1, random_close=False):

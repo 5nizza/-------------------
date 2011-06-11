@@ -1,12 +1,13 @@
-'''
+"""""
 Created on May 20, 2011
 
 @author: art_haali
-'''
+"""""
 import unittest
 from team_solver.solvers.stp_wrapper import STPWrapper
+from team_solver.tests import common
 
-import common
+import team_solver.tests.common
 import team_solver.interfaces.interfaces
 
 import team_solver.utils.all
@@ -55,7 +56,7 @@ class Test(unittest.TestCase):
         solver.solve_async(uniq_query, callbackOK, callbackError)
 
         assert ev_ok.wait(5)
-        assert self.solver_result != None
+        assert self.solver_result is not None
         assert not self.solver_result.is_sat
 
 

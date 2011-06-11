@@ -1,20 +1,7 @@
-'''
-Created on May 20, 2011
-
-@author: art_haali
-'''
 import unittest
-from team_solver.solvers.stp_wrapper import STPWrapper
-
-import common
-import team_solver.interfaces.interfaces
-
-import team_solver.utils.all
-
-import gevent
-import gevent.event
 from team_solver.solvers.z3_wrapper import Z3Wrapper
 from team_solver.solvers.boolector_wrapper import BoolectorWrapper
+from team_solver.tests import common
 
 z3_example_reply = """(define arr4_0x1c9c2c0 as-array[k!0])
 (define arr3_0x1ca21c0 as-array[k!1])
@@ -58,8 +45,8 @@ assignment_expected = {'arr4_0x1c9c2c0':{0:1, 1:0, 2:0, 3:0},
 class Test(unittest.TestCase):
     
     def _do_test(self, parser, reply_to_parse):
-        parse_error, is_sat, assignment = parser.parse_solver_reply(reply_to_parse)
-        assert parse_error == None, parse_error
+        parse_error, is_sat, assignment = parser.parse_solver_reply(reply_to_parse, None)
+        assert parse_error is None, parse_error
         assert is_sat
         common.assert_sat_assignments(assignment_expected, assignment)
 

@@ -1,24 +1,21 @@
-'''
+"""""
 Created on May 17, 2011
 
 @author: art_haali
-'''
+"""""
 
 import unittest
-import team_solver.utils.all as utils
-
-import common
 from team_solver.interfaces.interfaces import ICmdHandler
 from team_solver.interfaces.interfaces import SolverResult
 
 from team_solver.cmd_channels.tcp_cmd_channel import TcpCmdChannel
-from team_solver.cmd_channels.team_solver_messages_pb2  import CommandMessage
 from team_solver.cmd_channels.team_solver_messages_pb2 import ReplyMessage
 
 import struct
 
 import gevent
 import gevent.socket
+from team_solver.tests import common
 
 def _empty(self, uniq_query):
     pass
@@ -72,7 +69,7 @@ class Test(unittest.TestCase):
                 ev_new.clear()
                 ev_cancel.clear()
     
-                id = common.send_new_query(sock)
+                id = common.send_new_query(sock, common.SAT_QUERY)
                 assert ev_new.wait(5)
 
                 common.send_cancel_query(sock, id)
@@ -86,17 +83,17 @@ class Test(unittest.TestCase):
             sock = gevent.socket.socket()
             sock.connect(('localhost', 12346))
             
-            common.send_new_query(sock)
+            common.send_new_query(sock, common.SAT_QUERY)
             assert ev_new.wait(5)
 
             sock.close()
             assert ev_cancel.wait(5)
 
     def test_StopAcceptor(self):
-        ev_acceptor_exited = gevent.event.Event()
         ev_acceptor_started = gevent.event.Event()
         def accept_hook(self_obj, socket, address):
             ev_acceptor_started.set()
+            #noinspection PyArgumentList
             self._accept_original(self_obj, socket, address)
         TcpCmdChannel._accept = accept_hook
 
@@ -108,8 +105,8 @@ class Test(unittest.TestCase):
         sock.sendall(struct.pack('I', 1000))
 
         assert ev_acceptor_started.wait()
-        assert cmd_channel.stop(1)
-        
+        assert cmd_channel.stop()
+
     def test_StopHangedAcceptor(self): #TODO: test takes 1 sec., get rid of this
         ev_accepted = gevent.event.Event()
         def accept_hook(self_obj, socket, address):
@@ -124,27 +121,27 @@ class Test(unittest.TestCase):
         sock.connect(('localhost', 12346))
 
         assert ev_accepted.wait()
-        assert not cmd_channel.stop(1)
+        assert not cmd_channel.stop()
 
 
     def test_SendResult(self):
         self.uniq_query = None
         self.ev_new = gevent.event.Event()
         def on_new(u_q):
-            assert u_q != None
+            assert u_q is not None
             self.uniq_query = u_q
             self.ev_new.set()
         with TcpCmdChannel('localhost', 12346, Test.CmdHandlerFunc(on_new)) as tcp_cmd_channel:
-            assert tcp_cmd_channel != None
+            assert tcp_cmd_channel is not None
             sock = gevent.socket.socket()
             sock.connect(('localhost', 12346))
             
-            common.send_new_query(sock)
+            common.send_new_query(sock, common.SAT_QUERY)
             assert self.ev_new.wait(5)
-            assert self.uniq_query != None
+            assert self.uniq_query is not None
 
             result = SolverResult(self.uniq_query, True, {'some solver': '1212'}, {'arr':[0, 1, 2, 3]})
-            assert tcp_cmd_channel != None
+            assert tcp_cmd_channel is not None
             tcp_cmd_channel.send_result(result)
             common.recv_to_message(sock, ReplyMessage())
             #no exceptions, OK

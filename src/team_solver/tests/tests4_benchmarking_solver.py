@@ -2,18 +2,13 @@ import unittest
 
 from team_solver.solvers.benchmarking_solver import BenchmarkingSolver
 
-import common
-import team_solver.interfaces.interfaces
-
-import team_solver.utils.all
 
 import gevent
 import gevent.event
+from team_solver.tests import common
 
-import random
 from team_solver.tests.common import MockSolver
 from team_solver.interfaces.interfaces import SolverResult, UniqueQuery
-from team_solver.solvers.stp_wrapper import STPWrapper
 
 
 
@@ -26,7 +21,7 @@ class Test(unittest.TestCase):
             assert len(solver_result.stats) == 2
             common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT)
             ev_ok.set()
-        def callbackError(uniq_query, err_desc): assert 0
+        def callbackError(solver, uniq_query, err_desc): assert 0
 
         solver1 = MockSolver()
         solver2 = MockSolver()

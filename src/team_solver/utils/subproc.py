@@ -1,22 +1,19 @@
-'''
-Created on May 19, 2011
-
-@author: art_haali
+"""
 Based on:
 An example on how to communicate with a subprocess.
 
 Written by Marcus Cavanaugh.
 See http://groups.google.com/group/gevent/browse_thread/thread/7fca7230db0509f6
 where it was first posted.
-'''
+"""
 
 import subprocess
 import fcntl
 import sys
-import gevent.socket
 import errno
 import os
-import socket as original_socket
+import gevent
+import gevent.socket
 
 def read_pipe(pipe):
     """ pre: pipe is non-blocking """
@@ -52,7 +49,7 @@ def write_pipe(pipe, data):
 def popen_communicate(args, data=''):
     """Communicate with the process non-blockingly.
     
-    Returns (returncode, stdout, stderr)
+    Returns (return_code, stdout, stderr)
     """
     p = None
     try:
@@ -70,12 +67,12 @@ def popen_communicate(args, data=''):
         err = read_pipe(p.stderr)
         p.stderr.close()
 
-        while p.poll() == None:
+        while p.poll() is None:
             gevent.sleep(0.001) #switch to other greenlet, TODO: 1: find other ways to do async wait in gevent
 
-        return (p.returncode, out, err)
+        return p.returncode, out, err
     finally:
-        if p != None:
+        if p is not None:
             try:
                 p.terminate()
                 p.wait() #otherwise - zombie!

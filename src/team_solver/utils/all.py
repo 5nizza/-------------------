@@ -1,8 +1,8 @@
-'''
+"""
 Created on May 13, 2011
 
 @author: art_haali
-'''
+"""
 
 from gevent.event import AsyncResult
 import gevent.select
@@ -37,9 +37,9 @@ def recv_size(sock, size, cancel_obj = None): #TODO: optimizations: use lengths 
     remained = size
     result = ''
     objects_to_wait = [sock]
-    if cancel_obj != None:
+    if cancel_obj is not None:
         objects_to_wait.append(cancel_obj)
-    while remained != 0:
+    while remained:
         ready_to_read, _, __ =  gevent.select.select(objects_to_wait, [], [])
 
         if cancel_obj in ready_to_read:
