@@ -10,9 +10,11 @@ import gevent.event
 from team_solver.manager.manager import Manager
 
 from team_solver.cmd_channels.tcp_cmd_channel import TcpCmdChannel
+from team_solver.solvers.converters import KleeToSmt1Converter, CmdLineConverter
 
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 from team_solver.solvers.benchmarking_solver import BenchmarkingSolver
+from team_solver.solvers.query_converting_wrapper import QueryConvertingWrapper
 from team_solver.solvers.timed_solver import TimedSolver
 from team_solver.utils.cmd_line import add_solvers_args_to_parser,\
     create_solvers_from_args
@@ -38,17 +40,27 @@ def main(argv):
 
     #TODO: 1: add sanity validations of input: port number, etc.
     parser = argparse.ArgumentParser(description='SMT Solver Server.')
-    parser.add_argument('-p', metavar='port', dest = 'port', type=int, default=12345,
+    parser.add_argument('-p', dest = 'port', type=int, default=12345,
                         help='listening port (default: %(default)i)')
 
-    parser.add_argument('-b', 
+    parser.add_argument('-b',
                         dest="benchmark_mode",
-                        action="store_true", 
+                        action="store_true",
                         default=False, 
                         help='start in a benchmarking mode (default: %(default)r)')
-    
-    parser.add_argument('-timeout', metavar='timeout', dest = 'timeout', type=int, default=360,
+    #TODO: ah: 1: use '-t', '--timeout'
+    parser.add_argument('-timeout', dest = 'timeout', type=int, default=360,
                         help='solving timeout(sec.) for a query (benchmarking mode only) (default: %(default)i)')
+
+    parser.add_argument('-smtconverter',
+                        type=str,
+                        required=True,
+                        help='converter command: smt2->smt1 format')
+
+    parser.add_argument('-kleeconverter',
+                        type=str,
+                        required=True,
+                        help='converter command: klee->smt2 format')
 
     add_solvers_args_to_parser(parser)
 
@@ -68,6 +80,10 @@ def main(argv):
         solver = BenchmarkingSolver(solvers)
     else:
         solver = PortfolioSolver(all_solvers)
+    klee_to_smt2 = CmdLineConverter(args.kleeconverter.split(' ')[0], args.kleeconverter.split(' ')[1:])
+    smt2_to_smt1 = CmdLineConverter(args.smtconverter.split(' ')[0], args.smtconverter.split(' ')[1:])
+    klee_to_smt1 = KleeToSmt1Converter(klee_to_smt2, smt2_to_smt1)
+    solver = QueryConvertingWrapper(klee_to_smt1, solver)
 
     cmd_channel = TcpCmdChannel("localhost", port)
     man = Manager(solver, cmd_channel)

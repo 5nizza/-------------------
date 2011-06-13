@@ -27,11 +27,11 @@ class Manager(ICmdHandler):
         print self.LOG_PREFIX, 'started'
         while True:
             ev = team_solver.utils.all.wait_any([ev_stop, self._ev_next_query])
-            if ev == self._ev_next_query:
+            if ev is self._ev_next_query:
                 self._ev_next_query.clear()
                 self._schedule_next_query()
                 continue
-            if ev == ev_stop:
+            if ev is ev_stop:
                 self._cmd_channel.stop()
                 break
 
@@ -62,8 +62,8 @@ class Manager(ICmdHandler):
         self._ev_next_query.set()
 
     def _on_solver_error(self, solver, uniq_query, error):
-        #TODO: 0: ah: send error
-        print >>stderr, 'error in solver: {0}\n{1}\n query{2}'.format(solver.name, error, uniq_query)
+        #TODO: 0: ah: send reply with error
+        print >>stderr, 'error in solver: {0}\n{1}\n query{2}'.format(solver, error, uniq_query)
         self._solver_is_busy = False
         self._ev_next_query.set()
 

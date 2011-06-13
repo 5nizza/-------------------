@@ -50,6 +50,7 @@ def popen_communicate(args, data=''):
     """Communicate with the process non-blockingly.
     
     Returns (return_code, stdout, stderr)
+    Exceptions: OSError, IOError
     """
     p = None
     try:

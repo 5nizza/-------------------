@@ -71,7 +71,7 @@ class TcpCmdChannel(ICmdChannel):
         return len(self._acceptors) == 0
 
     def send_result(self, solver_result):
-        sock = self._get_sock(solver_result.unique_query) 
+        sock = self._get_sock(solver_result.unique_query)
         if sock is not None:
             reply_message = self._create_message(solver_result)
             self._del_query(solver_result.unique_query)

@@ -19,7 +19,7 @@ class Test(unittest.TestCase):
             assert not ev_ok.is_set()
             assert solver_result.is_sat
             assert len(solver_result.stats) == 2
-            common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT)
+            common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT_SMT)
             ev_ok.set()
         def callbackError(solver, uniq_query, err_desc): assert 0
 
@@ -27,11 +27,11 @@ class Test(unittest.TestCase):
         solver2 = MockSolver()
         solver = BenchmarkingSolver([solver1, solver2])
 
-        uniq_query = UniqueQuery(123, common.SAT_QUERY)
+        uniq_query = UniqueQuery(123, common.SAT_QUERY_SMT)
         solver.solve_async(uniq_query, callbackOK, callbackError)
 
-        solver1.raise_solved(SolverResult(uniq_query, True, {solver1: '123'}, common.SAT_QUERY_ASSIGNMENT))
-        solver2.raise_solved(SolverResult(uniq_query, True, {solver2: '222'}, common.SAT_QUERY_ASSIGNMENT))
+        solver1.raise_solved(SolverResult(uniq_query, True, {solver1: '123'}, common.SAT_QUERY_ASSIGNMENT_SMT))
+        solver2.raise_solved(SolverResult(uniq_query, True, {solver2: '222'}, common.SAT_QUERY_ASSIGNMENT_SMT))
 
         assert ev_ok.wait(5)
 
@@ -46,7 +46,7 @@ class Test(unittest.TestCase):
         solver2 = MockSolver()
         solver = BenchmarkingSolver([solver1, solver2])
 
-        uniq_query = UniqueQuery(123, common.SAT_QUERY)
+        uniq_query = UniqueQuery(123, common.SAT_QUERY_SMT)
         solver.solve_async(uniq_query, callbackOK, callbackError)
 
         solver1.raise_error(uniq_query, 'error!')
@@ -65,11 +65,11 @@ class Test(unittest.TestCase):
         solver2 = MockSolver()
         solver = BenchmarkingSolver([solver1, solver2])
 
-        uniq_query = UniqueQuery(123, common.SAT_QUERY)
+        uniq_query = UniqueQuery(123, common.SAT_QUERY_SMT)
         solver.solve_async(uniq_query, callbackOK, callbackError)
 
         solver1.raise_error(uniq_query, 'error!')
-        solver2.raise_solved(SolverResult(uniq_query, True, {solver2: '222'}, common.SAT_QUERY_ASSIGNMENT))
+        solver2.raise_solved(SolverResult(uniq_query, True, {solver2: '222'}, common.SAT_QUERY_ASSIGNMENT_SMT))
 
         assert ev_ok.wait(5)
 

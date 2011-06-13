@@ -17,7 +17,7 @@ class Test(unittest.TestCase):
 
         mock_solver = MockSolver()
         solver = TimedSolver(mock_solver)
-        uniq_query = UniqueQuery(123, common.SAT_QUERY)
+        uniq_query = UniqueQuery(123, common.SAT_QUERY_SMT)
         solver.solve_async(uniq_query, callbackOK, callbackError)
         mock_solver.raise_solved(SolverResult(uniq_query, False))
         assert ev_ok.wait(5)
@@ -31,7 +31,7 @@ class Test(unittest.TestCase):
             ev_error.set()
 
         solver = TimedSolver(MockSolver(), 0.001)
-        uniq_query = UniqueQuery(123, common.SAT_QUERY)
+        uniq_query = UniqueQuery(123, common.SAT_QUERY_SMT)
         solver.solve_async(uniq_query, callbackOK, callbackError)
 
         assert ev_error.wait(5)
@@ -44,7 +44,7 @@ class Test(unittest.TestCase):
         def callbackError(_, uniq_query, err_desc): assert 0
 
         solver = TimedSolver(MockSolver(), 99)
-        uniq_query = UniqueQuery(123, common.SAT_QUERY)
+        uniq_query = UniqueQuery(123, common.SAT_QUERY_SMT)
         solver.solve_async(uniq_query, callbackOK, callbackError)
         gevent.sleep(1) #wait until greenlet spawned
         solver.cancel()

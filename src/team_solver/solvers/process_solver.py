@@ -29,6 +29,7 @@ class ProcessSolver(ISolver):
         return "derived solver hasn't setup its name"
 
 #---ISolver-----------------------------------------------------------------
+    #TODO: 0: ah: refactor: extract AsyncCanceableAction, make all solvers sync, and wrap them into Async..
     def solve_async(self, uniq_query, callbackOK, callbackError):
         assert self._greenlet is None
         self._greenlet = gevent.spawn(self._solve, uniq_query, callbackOK, callbackError)

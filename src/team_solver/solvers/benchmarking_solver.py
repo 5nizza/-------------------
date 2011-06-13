@@ -1,9 +1,3 @@
-"""""
-Created on May 26, 2011
-
-@author: art_haali
-"""""
-
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 
 class BenchmarkingSolver(PortfolioSolver):
@@ -24,7 +18,7 @@ class BenchmarkingSolver(PortfolioSolver):
         self._stats.update(solver_result.stats)
         if self._solved + self._errored == len(self._PortfolioSolver__solvers):
             solver_result.stats = self._stats
-            self._PortfolioSolver__callbackOK(solver, solver_result)
+            self._PortfolioSolver__callbackOK(self, solver_result)
             self._init_state()
 
     def _on_error(self, solver, uniq_query, err_desc): #also on timeout
@@ -34,10 +28,10 @@ class BenchmarkingSolver(PortfolioSolver):
             if self._solved > 0:
                 solver_result = self._solver_result
                 solver_result.stats = self._stats
-                self._PortfolioSolver__callbackOK(solver, solver_result)
+                self._PortfolioSolver__callbackOK(self, solver_result)
             else:
                 assert len(self._stats) == len(self._PortfolioSolver__solvers)
-                self._PortfolioSolver__callbackError(solver, uniq_query, self._errors_to_str(self._stats))
+                self._PortfolioSolver__callbackError(self, uniq_query, self._errors_to_str(self._stats))
             self._init_state()
 
     def _errors_to_str(self, stats):

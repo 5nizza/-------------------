@@ -21,6 +21,9 @@ class UniqueQuery:
         self.query = query
         self.cmd_id = cmd_id
 
+    def __str__(self):
+        return 'cmd_id: {0}: query: {1}\n'.format(self.cmd_id, self.query)
+
 
 class Cmd:
     NEW_QUERY, CANCEL_QUERY = range(2)

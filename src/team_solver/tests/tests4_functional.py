@@ -19,33 +19,38 @@ import random
 
 #TODO: 1: ah: need to setup solvers paths
 class Test(unittest.TestCase):
-    def server_func(self, port, num_solvers=2, server_args = ()):
-        stp_args = common.STP_PATH + " --SMTLIB2 -p"
+    def server_func(self, port, num_solvers=2):
+        stp_args = common.STP_PATH + " --SMTLIB1 -p"
         solvers = []
         for _ in range(0, num_solvers):
             solvers.append(stp_args)
-        team_solver.run_server.main(['-p', str(port)] + list(server_args) + ['-stp'] + solvers)
+        team_solver.run_server.main(['-p', str(port)] +
+                                    ['-kleeconverter', common.KLEE_CONVERTER] +
+                                    ['-smtconverter', common.SMT_CONVERTER] +
+                                    ['-stp'] + solvers)
         print 'server_func: exit'
 
-    def client_func(self, port, number_of_queries=1, random_close=False):
+    def client_func(self, port, number_of_queries=1, random_close=False, client_id=None):
         sock = gevent.socket.socket()
         sock.connect(('127.0.0.1', port))
         for _ in range(1, number_of_queries):
-            id = common.send_new_query(sock, common.SAT_QUERY)
+            id = common.send_new_query(sock, common.SAT_QUERY_KLEE)
             if random_close and random.random() > 1/2.:
                 break
             common.send_cancel_query(sock, id)
-            id = common.send_new_query(sock, common.SAT_QUERY)
+            id = common.send_new_query(sock, common.SAT_QUERY_KLEE)
 
             reply = None
             while True:
                 reply = ReplyMessage()
                 common.recv_to_message(sock, reply)
-                if reply.cmdId == id: #there might be outdated messages
+                if reply.cmdId == id: #there might be an outdated messages
                     break
             assert reply.type == ReplyMessage.SAT
-            common.assert_sat_ser_assignments(reply.sat.assignment, common.SAT_QUERY_ASSIGNMENT_SERIALIZED)
+            common.assert_sat_ser_assignments(reply.sat.assignment, common.SAT_QUERY_ASSIGNMENT_SERIALIZED_KLEE)
         sock.close()
+
+
 
     def test_should_work(self):
         port = 18982
@@ -63,15 +68,15 @@ class Test(unittest.TestCase):
         sock = gevent.socket.socket()
         sock.connect(('localhost', port))
 
-        id = common.send_new_query(sock, common.SAT_QUERY)
+        id = common.send_new_query(sock, common.SAT_QUERY_KLEE)
         common.send_cancel_query(sock, id)
 
-        id = common.send_new_query(sock, common.SAT_QUERY)
+        id = common.send_new_query(sock, common.SAT_QUERY_KLEE)
         common.send_cancel_query(sock, id)
 
         team_solver.run_server.sigint_handler()
         server_g.join()
-        
+
     def test_stress_portfolio(self):
         port = 18982
         server_g = gevent.spawn(self.server_func, port, 10)
@@ -79,10 +84,9 @@ class Test(unittest.TestCase):
 
         greenlets = []
         for _ in range(1, 100):
-            g = gevent.spawn(self.client_func, port, 10, True)
+            g = gevent.spawn(self.client_func, port, 10, True, _)
             greenlets.append(g)
         gevent.joinall(greenlets)
-
         team_solver.run_server.sigint_handler()
         server_g.join()
 

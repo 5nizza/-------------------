@@ -22,7 +22,7 @@ class Test(unittest.TestCase):
         def callbackOK(_, solver_result): assert 0
         def callbackError(_, any_query, err_desc): assert 0, err_desc
         solver = STPWrapper("python", ['-c', 'while True: pass'])
-        any_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY)
+        any_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY_SMT)
         solver.solve_async(any_query, callbackOK, callbackError)
         solver.cancel()
         #if it starts => OK
@@ -33,12 +33,12 @@ class Test(unittest.TestCase):
         ev_ok = gevent.event.Event()
         def callbackOK(_, solver_result):
             assert solver_result.is_sat
-            common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT)
+            common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT_SMT)
             ev_ok.set()
         def callbackError(_, uniq_query, err_desc): assert 0
 
         solver = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
-        uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY)
+        uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY_SMT)
         solver.solve_async(uniq_query, callbackOK, callbackError)
 
         assert ev_ok.wait(5)
@@ -52,7 +52,7 @@ class Test(unittest.TestCase):
         def callbackError(_, uniq_query, err_desc): assert 0
 
         solver = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
-        uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.UNSAT_QUERY)
+        uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.UNSAT_QUERY_SMT)
         solver.solve_async(uniq_query, callbackOK, callbackError)
 
         assert ev_ok.wait(5)

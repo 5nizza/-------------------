@@ -20,19 +20,19 @@ def create_solvers_from_args(args):
     return stp_wrappers + z3_wrappers + boolector_wrappers
 
 def add_solvers_args_to_parser(parser):
-    parser.add_argument('-stp', metavar='stp-solver', type=str,
+    parser.add_argument('-stp', type=str,
                         dest = "stp_solvers",
                         nargs = "*",
                         default=[],
                         help='add stp solvers (cmds in quotes, separated by space, e.g.: "..../stp --SMTLIB1 -p")')
 
-    parser.add_argument('-z3', metavar='z3-solver', type=str,
+    parser.add_argument('-z3', type=str,
                         dest = "z3_solvers",
                         nargs = "*",
                         default=[],
                         help='add z3 solvers (cmd in quotes, separated by space, e.g.: "..../z3 -in -smt -m")')
 
-    parser.add_argument('-boolector', metavar='boolector-solver', type=str,
+    parser.add_argument('-boolector', type=str,
                         dest = "boolector_solvers",
                         nargs = "*",
                         default=[],
