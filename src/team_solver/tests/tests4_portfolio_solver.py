@@ -58,7 +58,7 @@ class Test(unittest.TestCase):
         def callbackError(solver, uniq_query, err_desc): assert 0, err_desc
 
         solvers = []
-        for _ in range(1, 20):
+        for _ in range(1, 10):
             if random.random() > 1/2.:
                 solver = AsyncSolverWrapper(ProcessSolver(STPParser(), "STP", common.STP_PATH, ["--SMTLIB2", "-p"]))
             else:

@@ -186,7 +186,7 @@ class TcpCmdChannel(ICmdChannel):
     def _serialize_stats(self, solver_result_stats):
         serialized = []
         for s in solver_result_stats:
-            serialized.append(str(s) + ': ' + solver_result_stats[s])
+            serialized.append(str(s) + ': ' + str(solver_result_stats[s]))
         return serialized
 
     def _serialize_assignment(self, solver_result_assignment):

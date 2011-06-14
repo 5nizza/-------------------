@@ -8,13 +8,35 @@ class SolverResult:
     #TODO: stats_dict -> stats, it shouldn't be a dict
     def __init__(self, unique_query, is_sat, stats_dict=None, assignment=None):
         """ assignment is dict: arr_name -> {dict index->value}
-            stats is dict: solver -> stats (str)
+            stats is dict: solver -> StatsData
         """
         self.unique_query = unique_query
         self.is_sat = is_sat
         if is_sat:
             self.assignment = assignment
         self.stats = stats_dict if stats_dict is not None else {}
+
+
+class StatsData:
+    def __init__(self, time, sat_time=None, nof_sat_calls=None):
+        self._time = time
+        self._sat_time = sat_time
+        self._nof_sat_calls = nof_sat_calls
+
+    @property
+    def time(self):
+        return self._time
+
+    @property
+    def sat_time(self):
+        return self._sat_time
+
+    @property
+    def nof_sat_calls(self):
+        return self._nof_sat_calls
+
+    def __str__(self):
+        return 'time: {0}, sat_time: {1}, nof_sat_call: {2}'.format(self._time, self._sat_time, self._nof_sat_calls)
 
 
 class UniqueQuery:
