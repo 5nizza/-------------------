@@ -18,8 +18,7 @@ from team_solver.solvers.portfolio_solver import PortfolioSolver
 from team_solver.solvers.benchmarking_solver import BenchmarkingSolver
 from team_solver.solvers.query_converting_wrapper import QueryConvertingWrapper
 from team_solver.solvers.timed_solver_wrapper import TimedSolverWrapper
-from team_solver.utils.cmd_line import add_solvers_args_to_parser,\
-    create_solvers_from_args
+from team_solver.utils.cmd_line import add_solvers_args_to_parser, create_solvers_from_args
 
 
 ev_stop = None
@@ -45,11 +44,6 @@ def main(argv):
     parser.add_argument('-p', dest = 'port', type=int, default=12345,
                         help='listening port (default: %(default)i)')
 
-    parser.add_argument('-b',
-                        dest="benchmark_mode",
-                        action="store_true",
-                        default=False, 
-                        help='start in a benchmarking mode (default: %(default)r)')
     parser.add_argument('-timeout', dest = 'timeout', type=int, default=360,
                         help='solving timeout(sec.) for a query (benchmarking mode only) (default: %(default)i)')
 
@@ -70,23 +64,18 @@ def main(argv):
     port = args.port
 
     sync_solvers = create_solvers_from_args(args)
-    print "Created {0} solvers to feed {1}".format(len(sync_solvers),
-                                                   ['PortfolioSolver', 'BenchmarkingSolver'][args.benchmark_mode])
+    print "Created {0} solvers to feed PortfolioSolver".format(len(sync_solvers))
     if not sync_solvers:
         print 'Provide input solvers.'
         return
 
-    if args.benchmark_mode:
-        timed_solvers = [TimedSolverWrapper(s, args.timeout) for s in sync_solvers]
-        solver = BenchmarkingSolver([AsyncSolverWrapper(s) for s in timed_solvers])
-    else:
-        solver = PortfolioSolver([AsyncSolverWrapper(s) for s in sync_solvers])
+    sync_solver = PortfolioSolver([AsyncSolverWrapper(s) for s in sync_solvers])
 
     klee_to_smt2 = CmdLineConverter(args.kleeconverter.split(' ')[0], args.kleeconverter.split(' ')[1:])
     smt2_to_smt1 = CmdLineConverter(args.smtconverter.split(' ')[0], args.smtconverter.split(' ')[1:])
     klee_to_smt1 = KleeToSmt1Converter(klee_to_smt2, smt2_to_smt1)
 
-    solver = AsyncSolverWrapper(QueryConvertingWrapper(klee_to_smt1, SyncSolverWrapper(solver)))
+    solver = AsyncSolverWrapper(QueryConvertingWrapper(klee_to_smt1, SyncSolverWrapper(sync_solver)))
 
     cmd_channel = TcpCmdChannel("localhost", port)
     man = Manager(solver, cmd_channel)
