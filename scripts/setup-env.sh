@@ -1,2 +1,6 @@
-export PYTHONPATH=$PYTHONPATH:$(dirname $0)/../src
-export TEAM_SOLVER_ROOT=$(dirname $0)/../
+THIS=${BASH_SOURCE[0]}
+PATH_TO_THIS=$(pwd)/$THIS
+
+export TEAM_SOLVER_ROOT=$(dirname $PATH_TO_THIS)/..
+export PYTHONPATH=$PYTHONPATH:$TEAM_SOLVER_ROOT/src
+
