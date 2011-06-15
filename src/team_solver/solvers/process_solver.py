@@ -9,9 +9,9 @@ class IParser:
 
 
 class ProcessSolver(ISolver):
-    def __init__(self, parser, name_prefix, cmd_path, cmd_options = ()):
+    def __init__(self, parser, name, cmd_path, cmd_options = ()):
         self._parser = parser
-        self._name = "{0}: ({1})".format(name_prefix, cmd_options)
+        self._name = name
         self._cmd_args = [cmd_path]
         self._cmd_args.extend(cmd_options)
 
@@ -26,5 +26,13 @@ class ProcessSolver(ISolver):
 
         return SolverResult(uniq_query, is_sat, {self: stats_data}, assignment)
 
-    def __str__(self):
+    @property
+    def name(self):
         return self._name
+
+    @property
+    def config_args(self):
+        return self._cmd_args[1:]
+
+    def __str__(self):
+        return "{0}: ({1})".format(self.name, self.config_args)

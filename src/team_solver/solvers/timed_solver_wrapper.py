@@ -16,3 +16,7 @@ class TimedSolverWrapper(ISolver):
 
     def __str__(self):
         return str(self._sync_solver)
+
+    @property
+    def wrapped_solver(self):
+        return self._sync_solver
