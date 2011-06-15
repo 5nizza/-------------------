@@ -22,6 +22,8 @@ class KleeToSmt1Converter:
         return smt1_arr_name.split('_')[0]
 
 class CmdLineConverter:
+    """ Write input to stdint, read output from stdout """
+    
     def __init__(self, path, opts):
         self._cmd_to_run = [path]
         self._cmd_to_run.extend(opts)
