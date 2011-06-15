@@ -1,4 +1,5 @@
-. ./setup-env.sh
+. $(dirname $0)/setup-env.sh
+
 
 $TEAM_SOLVER_ROOT/src/team_solver/run_server.py \
 -kleeconverter "$TEAM_SOLVER_ROOT/3rd_party/klee_converter/queries-to-smt-format -output-format=smt2 -print-to-stdout -optimize-divides=1 -" \

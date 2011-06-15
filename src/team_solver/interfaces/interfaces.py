@@ -36,7 +36,7 @@ class StatsData:
         return self._nof_sat_calls
 
     def __str__(self):
-        return 'time: {0}, sat_time: {1}, nof_sat_call: {2}'.format(self._time, self._sat_time, self._nof_sat_calls)
+        return 'time: {0}, sat_time: {1}, nof_sat_calls: {2}'.format(self._time, self._sat_time, self._nof_sat_calls)
 
 
 class UniqueQuery:

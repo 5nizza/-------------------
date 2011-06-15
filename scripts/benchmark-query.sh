@@ -1,4 +1,4 @@
-. ./setup-env.sh
+. $(dirname $0)/setup-env.sh
 
 
 if [ $# -ne 1 ]

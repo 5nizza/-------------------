@@ -1,4 +1,4 @@
-. ./setup-env.sh
+. $(dirname $0)/setup-env.sh
 
 $TEAM_SOLVER_ROOT/src/team_solver/send_query.py $1
 
