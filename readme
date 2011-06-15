@@ -7,15 +7,15 @@ Download 3rd party solvers:
 ./get-3rd-party.sh
 
 Setup PYTHONPATH to include ./src:
-. ./setup-env.sh
+. ./scripts/setup-env.sh
 
 Run tests:
 nosetests .
 
 Run server:
-./run_server.py
+.scripts/run_server.py
 By default the server uses (probably outdated) solvers from 3rd_party directory.
 
 Send query to the server:
-./send_query.py example-klee-query
+./scripts/send_query.py example-klee-query
 where query.smt should be in a klee format.
