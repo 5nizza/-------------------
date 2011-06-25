@@ -1,16 +1,21 @@
+Install dependencies:
+libevent
+greenlent
+gevent
+
+Download 3rd party solvers:
+./get-3rd-party.sh
+
 Setup PYTHONPATH to include ./src:
 . ./setup-env.sh
 
+Run tests:
+nosetests .
+
 Run server:
-./src/team_solver/run_server.py
+./run_server.py
+By default the server uses (probably outdated) solvers from 3rd_party directory.
 
 Send query to the server:
-./src/team_solver/send_query.py query.smt
-where query.smt should be in the same format as setup of solvers
-
-
-Dependencies:
-libevent
-greenlent
-gevent python module: http://www.gevent.org/
-
+./send_query.py example-klee-query
+where query.smt should be in a klee format.

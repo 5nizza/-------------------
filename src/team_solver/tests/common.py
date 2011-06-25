@@ -1,14 +1,14 @@
-"""""
+"""
 Created on May 24, 2011
 
 @author: art_haali
-"""""
+"""
 from team_solver.interfaces.interfaces import ISolver
 
-STP_PATH = "/home/art_haali/projects/stp-fast-prover/trunk/stp/output/bin/stp"
-Z3_PATH = "/home/art_haali/projects/smt-comparison/z3/bin/z3"
-KLEE_CONVERTER = "/home/art_haali/Documents/eclipse-workspaces/python-workspace/team-solver/queries-to-smt-format -output-format=smt2 -print-to-stdout -optimize-divides=1 -"
-SMT_CONVERTER = "/home/art_haali//projects/smt-comparison/cvc3-nightly-build-2011-04-01/cvc3-2011-04-01-i686-linux-opt -lang smt2 +translate -output-lang smtlib"
+STP_PATH = "./3rd_party/stp/stp"
+Z3_PATH = "./3rd_party/z3/z3"
+KLEE_CONVERTER = "./3rd_party/klee_converter/queries-to-smt-format -output-format=smt2 -print-to-stdout -optimize-divides=1 -"
+SMT_CONVERTER = "./3rd_party/smt_converter/cvc3-2011-04-01-i686-linux-opt -lang smt2 +translate -output-lang smtlib"
 
 SAT_QUERY_KLEE = r"""
 # Query 30 -- Type: InitialValues, Instructions: 9250
