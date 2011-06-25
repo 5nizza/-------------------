@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+#TODO: rafactor: BenchmarkingSolver vs SequentialBenchmarkingSolver
+# this differs from BenchmarkingSolver in the order in which solvers are called:
+# BenchmarkingSolver calls all solvers in parallel
+# SequentialBenchmarkingSolver calls them sequentially
+# When benchmarking lots of queries it is easier to paralellize the experiment with SequentialBenchmarkingSolver
+
 import gevent.event
 import sys
 import argparse
