@@ -39,10 +39,12 @@ class Manager(ICmdHandler):
 
 #---ICmdHandler----------------------------------------------------------------
     def on_new_query(self, uniq_query):
+        print 'new query'
         self._queries.append(uniq_query)
         self._ev_next_query.set()
 
     def on_cancel_query(self, uniq_query):
+        print 'cancel query'
         if uniq_query in self._queries:
             self._queries.remove(uniq_query)
         else:
@@ -58,17 +60,17 @@ class Manager(ICmdHandler):
     #noinspection PyUnusedLocal
     def _on_solver_ok(self, solver, solver_result):
         self._cmd_channel.send_result(solver_result) #context switching call(?)
-        self._solver_is_busy = False #TODO: ah, get rid of
+        self._solver_is_busy = False #REFACTOR: get rid of?
         self._ev_next_query.set()
 
     def _on_solver_error(self, solver, uniq_query, error):
-        #TODO: 0: ah: send reply with error
+        #TODO: send reply with error
         print >>stderr, 'error in solver: {0}\n{1}\n query{2}'.format(solver, error, uniq_query)
         self._solver_is_busy = False
         self._ev_next_query.set()
 
     def _schedule_next_query(self):
-        #TODO: 1: validate input data before send to solver
+        #TODO: validate input data before send to solver
         if self._solver_is_busy == False and self._queries:
             uniq_query = self._queries.pop(0)
             self._solver_is_busy = True

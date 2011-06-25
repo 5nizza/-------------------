@@ -30,7 +30,7 @@ def work_around_infinite_wait(): # we need some active greenlet, since gevent ha
         if ev_stop.wait(0.5):
             break
 
-#TODO: 1: use logging module
+#TODO: use logging module
 def main(argv):
     global ev_stop
     ev_stop = gevent.event.Event()
@@ -38,7 +38,7 @@ def main(argv):
     signal.signal(signal.SIGINT, sigint_handler)
     gevent.spawn(work_around_infinite_wait)
 
-    #TODO: 1: add sanity validations of input: port number, etc.
+    #TODO: add sanity validations of input: port number, etc.
     parser = argparse.ArgumentParser(description='SMT Solver Server.')
     parser.add_argument('-p', dest = 'port', type=int, default=12345,
                         help='listening port (default: %(default)i)')
@@ -48,7 +48,6 @@ def main(argv):
                         action="store_true",
                         default=False, 
                         help='start in a benchmarking mode (default: %(default)r)')
-    #TODO: ah: 1: use '-t', '--timeout'
     parser.add_argument('-timeout', dest = 'timeout', type=int, default=360,
                         help='solving timeout(sec.) for a query (benchmarking mode only) (default: %(default)i)')
 

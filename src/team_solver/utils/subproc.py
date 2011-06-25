@@ -45,7 +45,6 @@ def write_pipe(pipe, data):
             sys.exc_clear()
         gevent.socket.wait_write(pipe.fileno())
 
-#TODO: strange thing: if main thread dies => this func return empty out
 def popen_communicate(args, data=''):
     """Communicate with the process non-blockingly.
     
@@ -69,7 +68,7 @@ def popen_communicate(args, data=''):
         p.stderr.close()
 
         while p.poll() is None:
-            gevent.sleep(0.001) #switch to other greenlet, TODO: 1: find other ways to do async wait in gevent
+            gevent.sleep(0.001) #switch to other greenlet, TODO: find other ways to do async wait in gevent
 
         return p.returncode, out, err
     finally:

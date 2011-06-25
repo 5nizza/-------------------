@@ -24,7 +24,7 @@ message ReplyMessage {
 	enum Type {
 		SAT = 1;
 		UNSAT = 2;
-		ERROR = 3; //TODO: 1: ah: remove?
+		ERROR = 3;
 	}
 
 	message SatReplyMessage {
@@ -43,4 +43,5 @@ message ReplyMessage {
 
 	optional SatReplyMessage sat = 3;
 	optional UnsatReplyMessage unsat = 4;
+	optional ErrorReplyMessage error = 5;
 }

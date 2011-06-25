@@ -17,7 +17,6 @@ import team_solver.utils.all
 
 import random
 
-#TODO: 1: ah: need to setup solvers paths
 class Test(unittest.TestCase):
     def server_func(self, port, num_solvers=2):
         stp_args = common.STP_PATH + " --SMTLIB1 -p"
@@ -80,7 +79,7 @@ class Test(unittest.TestCase):
     def test_stress_portfolio(self):
         port = 18982
         server_g = gevent.spawn(self.server_func, port, 10)
-        gevent.sleep(1) #TODO: ah, ensure server starts - get rid of
+        gevent.sleep(1) #ensure server starts
 
         greenlets = []
         for _ in range(1, 100):

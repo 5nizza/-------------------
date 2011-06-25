@@ -12,7 +12,7 @@ class QueryConvertingWrapper(ISolver):
         self._greenlet = None
 
     def solve_async(self, uniq_query, callbackOK, callbackError):
-        #TODO: 0: ah, use AsyncCanceableAction
+        #REFACTOR: use AsyncCanceableAction, ISolver with synchronous solve method.
         assert self._greenlet is None
         self._greenlet = gevent.spawn(self._solve, uniq_query, callbackOK, callbackError)
 

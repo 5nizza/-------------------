@@ -2,7 +2,6 @@ from team_solver.solvers.process_solver import ProcessSolver
 
 class BoolectorWrapper(ProcessSolver):
     def __init__(self, cmd_path, cmd_options = ()):
-        #TODO: 1: ah, check that this options are set (for parsing): -m -d
         ProcessSolver.__init__(self, cmd_path, cmd_options)
         self._name = 'Boolector: ({0})'.format(cmd_options)
 

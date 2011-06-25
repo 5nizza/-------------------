@@ -28,7 +28,7 @@ def wrap_exc(new_exc_creater, desc, exc_to_wrap):
     trace = sys.exc_info()[2]
     return new_exc_creater("{0}: {1}".format(desc, exc_to_wrap)), None, trace
 
-def recv_size(sock, size, cancel_obj = None): #TODO: optimizations: use lengths of ^2, decrease number of generated strings
+def recv_size(sock, size, cancel_obj = None):
     """ Return:
         string of requested size
         or '' in case of EOF

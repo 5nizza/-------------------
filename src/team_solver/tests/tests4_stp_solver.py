@@ -15,12 +15,11 @@ import team_solver.utils.all
 import gevent
 import gevent.event
 
-#TODO: 2: ah, rename and test processor only
+#REFACTOR: rename and test processor only
 class Test(unittest.TestCase):
-    #TODO: help for 'strange thing: if main thread dies => this func return empty out'
     def test_cancel_hanged_solver(self):
-        def callbackOK(_, solver_result): assert 0
-        def callbackError(_, any_query, err_desc): assert 0, err_desc
+        def callbackOK(_, __): assert 0
+        def callbackError(_, __, err_desc): assert 0, err_desc
         solver = STPWrapper("python", ['-c', 'while True: pass'])
         any_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY_SMT)
         solver.solve_async(any_query, callbackOK, callbackError)
@@ -35,7 +34,7 @@ class Test(unittest.TestCase):
             assert solver_result.is_sat
             common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT_SMT)
             ev_ok.set()
-        def callbackError(_, uniq_query, err_desc): assert 0
+        def callbackError(_, __, e): assert 0, e
 
         solver = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
         uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY_SMT)
@@ -49,7 +48,7 @@ class Test(unittest.TestCase):
         def callbackOK(solver, solver_result):
             self.solver_result = solver_result
             ev_ok.set()
-        def callbackError(_, uniq_query, err_desc): assert 0
+        def callbackError(_, __, e): assert 0, e
 
         solver = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
         uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.UNSAT_QUERY_SMT)

@@ -56,7 +56,7 @@ class TcpCmdChannel(ICmdChannel):
         return g
 
 #------------------------------------------------------------------------------
-    def register_cmd_handler(self, cmd_handler): #TODO: think how to remove
+    def register_cmd_handler(self, cmd_handler): #REFACTOR: think how to remove
         self._cmd_handler = cmd_handler
 
     def start(self):
@@ -170,7 +170,7 @@ class TcpCmdChannel(ICmdChannel):
             sock.sendall(header)
             sock.sendall(message_as_string)
         except origin_socket.error:
-            print traceback.format_exc() #TODO: separate cases of connection reset (econnreset, epipe..) from other errors
+            print traceback.format_exc()
 
     #noinspection PyUnresolvedReferences
     def _create_message(self, solver_result):
@@ -191,7 +191,7 @@ class TcpCmdChannel(ICmdChannel):
         return serialized
 
     def _serialize_solver(self, solver):
-        return getattr(solver, 'name', str(solver)) #TODO: ah: use __str__
+        return getattr(solver, 'name', str(solver)) #REFACTOR: use __str__
 
     def _serialize_assignment(self, solver_result_assignment):
         serialized = []

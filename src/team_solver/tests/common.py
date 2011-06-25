@@ -145,7 +145,7 @@ def send_cancel_query(sock, cmd_id):
     sock.sendall(struct.pack('I', len(cancel_query_mes_as_string)))
     sock.sendall(cancel_query_mes_as_string)
 
-#TODO: extract common functions, use them in cmd_channel
+#REFACTOR: extract common functions, use them in cmd_channel
 def recv_to_message(sock, mes, ev_cancel=None):
     mes_size = struct.unpack("I", team_solver.utils.all.recv_size(sock, 4))[0]
     message_as_string = team_solver.utils.all.recv_size(sock, mes_size, ev_cancel)

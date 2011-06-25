@@ -10,7 +10,7 @@ import gevent
 from gevent.hub import GreenletExit
 
 
-#TODO: 1: replace inheritance by collaborator 'parser'?
+#REFACTOR: replace inheritance by collaborator 'parser'
 class ProcessSolver(ISolver):
     """ base class for external process based solvers """
 
@@ -29,7 +29,6 @@ class ProcessSolver(ISolver):
         return "derived solver hasn't setup its name"
 
 #---ISolver-----------------------------------------------------------------
-    #TODO: 0: ah: refactor: extract AsyncCanceableAction, make all solvers sync, and wrap them into Async..
     def solve_async(self, uniq_query, callbackOK, callbackError):
         assert self._greenlet is None
         self._greenlet = gevent.spawn(self._solve, uniq_query, callbackOK, callbackError)
@@ -40,7 +39,6 @@ class ProcessSolver(ISolver):
             self._greenlet = None #greenlet is created but not started
 
 #---------------------------------------------------------------------------
-    #TODO: ah, send is blocking => stealing time from solver
     def _solve(self, uniq_query, callbackOK, callbackError):
         callback = None
         try:
@@ -57,7 +55,7 @@ class ProcessSolver(ISolver):
             if parse_error is None:
                 callback = lambda: callbackOK(self, SolverResult(uniq_query, is_sat, {self: str(finish-start)}, assignment))
             else:
-                callback = lambda: callbackError(self, uniq_query, parse_error) #TODO: get rid of it?
+                callback = lambda: callbackError(self, uniq_query, parse_error)
         except GreenletExit:
             callback = lambda: True
         except Exception, e:
