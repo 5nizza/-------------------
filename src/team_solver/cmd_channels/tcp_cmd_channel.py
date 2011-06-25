@@ -5,6 +5,8 @@ Created on May 13, 2011
 """
 
 from sys import stderr
+from gevent.greenlet import Greenlet
+from gevent.timeout import Timeout
 
 from team_solver.interfaces.interfaces import ICmdChannel
 from team_solver.interfaces.interfaces import UniqueQuery
@@ -67,8 +69,13 @@ class TcpCmdChannel(ICmdChannel):
         self._stop = True
         self._stream_server.stop()
         self._ev_stop_setter.send("game over")
-        gevent.greenlet.joinall(self._acceptors) #TOOD: use timeout, but how to check timeout expire?
-        return len(self._acceptors) == 0
+        try:
+            with Timeout(2):
+                gevent.greenlet.joinall(self._acceptors)
+        except Timeout:
+            return False
+        assert len(self._acceptors) == 0, len(self._acceptors)
+        return True
 
     def send_result(self, solver_result):
         sock = self._get_sock(solver_result.unique_query)
@@ -85,7 +92,7 @@ class TcpCmdChannel(ICmdChannel):
         print log_prefix, 'started'
         try:
             while True:
-                message = self._read_message(socket) #TODO: 2: optimize: if there is data in buffer, but connection was reset we still continue to read it: discard it!
+                message = self._read_message(socket)
                 if self._stop:
                     break
                 if message is None: #client disconnected

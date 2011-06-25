@@ -107,22 +107,21 @@ class Test(unittest.TestCase):
         assert ev_acceptor_started.wait()
         assert cmd_channel.stop()
 
-        #TODO: ah: 1: restore
-#    def test_StopHangedAcceptor(self): #TODO: test takes 1 sec., get rid of this
-#        ev_accepted = gevent.event.Event()
-#        def accept_hook(self_obj, socket, address):
-#            ev_accepted.set()
-#            gevent.sleep(999)
-#        TcpCmdChannel._accept = accept_hook
-#
-#        cmd_channel = TcpCmdChannel('localhost', 12346, Test.CmdHandler())
-#        cmd_channel.start()
-#
-#        sock = gevent.socket.socket()
-#        sock.connect(('localhost', 12346))
-#
-#        assert ev_accepted.wait()
-#        assert not cmd_channel.stop()
+    def test_StopHangedAcceptor(self):
+        ev_accepted = gevent.event.Event()
+        def accept_hook(self_obj, socket, address):
+            ev_accepted.set()
+            gevent.sleep(999)
+        TcpCmdChannel._accept = accept_hook
+
+        cmd_channel = TcpCmdChannel('localhost', 12346, Test.CmdHandler())
+        cmd_channel.start()
+
+        sock = gevent.socket.socket()
+        sock.connect(('localhost', 12346))
+
+        assert ev_accepted.wait()
+        assert not cmd_channel.stop()
 
 
     def test_SendResult(self):
