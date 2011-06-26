@@ -1,6 +1,6 @@
 import unittest
-from team_solver.solvers.z3_wrapper import Z3Wrapper
-from team_solver.solvers.boolector_wrapper import BoolectorWrapper
+from team_solver.solvers.z3_parser import Z3Parser
+from team_solver.solvers.boolector_parser import BoolectorParser
 from team_solver.tests import common
 
 z3_example_reply = """(define arr4_0x1c9c2c0 as-array[k!0])
@@ -43,18 +43,18 @@ assignment_expected = {'arr4_0x1c9c2c0':{0:1, 1:0, 2:0, 3:0},
                        'arr1_0x1c90aa0': {0:1, 1:0, 2:0, 3:0}}
 
 class Test(unittest.TestCase):
-    
+
     def _do_test(self, parser, reply_to_parse):
-        parse_error, is_sat, assignment = parser.parse_solver_reply(reply_to_parse, None)
+        parse_error, is_sat, assignment = parser.parse(reply_to_parse, None)
         assert parse_error is None, parse_error
         assert is_sat
         common.assert_sat_assignments(assignment_expected, assignment)
 
     def test_z3_parsing_sat(self):
-        self._do_test(Z3Wrapper('', ''), z3_example_reply)
+        self._do_test(Z3Parser(), z3_example_reply)
 
     def test_boolector_parsing_sat(self):
-        self._do_test(BoolectorWrapper('', ''), boolector_example_reply)
+        self._do_test(BoolectorParser(), boolector_example_reply)
 
 
 if __name__ == "__main__":

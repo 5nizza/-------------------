@@ -4,11 +4,11 @@ Created on May 26, 2011
 @author: art_haali
 """""
 
-from team_solver.interfaces.interfaces import ISolver
+from team_solver.interfaces.interfaces import ISolverAsync
 
-class PortfolioSolver(ISolver):
-    def __init__(self, solvers):
-        self.__solvers = solvers
+class PortfolioSolver(ISolverAsync):
+    def __init__(self, async_solvers):
+        self.__solvers = async_solvers
 
 #---ISolver-----------------------------------------------------------------
     def solve_async(self, uniq_query, callbackOK, callbackError):

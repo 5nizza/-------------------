@@ -10,12 +10,14 @@ import gevent.event
 from team_solver.manager.manager import Manager
 
 from team_solver.cmd_channels.tcp_cmd_channel import TcpCmdChannel
+from team_solver.solvers.async_sync_solver_wrappers import AsyncSolverWrapper
+from team_solver.solvers.async_sync_solver_wrappers import SyncSolverWrapper
 from team_solver.solvers.converters import KleeToSmt1Converter, CmdLineConverter
 
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 from team_solver.solvers.benchmarking_solver import BenchmarkingSolver
 from team_solver.solvers.query_converting_wrapper import QueryConvertingWrapper
-from team_solver.solvers.timed_solver import TimedSolver
+from team_solver.solvers.timed_solver_wrapper import TimedSolverWrapper
 from team_solver.utils.cmd_line import add_solvers_args_to_parser,\
     create_solvers_from_args
 
@@ -67,22 +69,24 @@ def main(argv):
 
     port = args.port
 
-    all_solvers = create_solvers_from_args(args)
-    print "Created {0} solvers to feed {1}".format(len(all_solvers),
+    sync_solvers = create_solvers_from_args(args)
+    print "Created {0} solvers to feed {1}".format(len(sync_solvers),
                                                    ['PortfolioSolver', 'BenchmarkingSolver'][args.benchmark_mode])
-    if not all_solvers:
+    if not sync_solvers:
         print 'Provide input solvers.'
         return
 
     if args.benchmark_mode:
-        solvers = [TimedSolver(s) for s in all_solvers]
-        solver = BenchmarkingSolver(solvers)
+        timed_solvers = [TimedSolverWrapper(s, args.timeout) for s in sync_solvers]
+        solver = BenchmarkingSolver([AsyncSolverWrapper(s) for s in timed_solvers])
     else:
-        solver = PortfolioSolver(all_solvers)
+        solver = PortfolioSolver([AsyncSolverWrapper(s) for s in sync_solvers])
+
     klee_to_smt2 = CmdLineConverter(args.kleeconverter.split(' ')[0], args.kleeconverter.split(' ')[1:])
     smt2_to_smt1 = CmdLineConverter(args.smtconverter.split(' ')[0], args.smtconverter.split(' ')[1:])
     klee_to_smt1 = KleeToSmt1Converter(klee_to_smt2, smt2_to_smt1)
-    solver = QueryConvertingWrapper(klee_to_smt1, solver)
+
+    solver = AsyncSolverWrapper(QueryConvertingWrapper(klee_to_smt1, SyncSolverWrapper(solver)))
 
     cmd_channel = TcpCmdChannel("localhost", port)
     man = Manager(solver, cmd_channel)

@@ -1,66 +1,36 @@
 import team_solver.utils.subproc
 
-import sys
-import traceback
 import time
 
-from team_solver.interfaces.interfaces import SolverResult, ISolver
-
-import gevent
-from gevent.hub import GreenletExit
+from team_solver.interfaces.interfaces import SolverResult, ISolver, SolverException
 
 
-#REFACTOR: replace inheritance by collaborator 'parser'
+class IParser:
+    def parse(self, out, err):
+        """ Return: parse_error, is_sat, assignment """
+        raise NotImplementedError()
+
+
 class ProcessSolver(ISolver):
-    """ base class for external process based solvers """
-
-    def __init__(self, cmd_path, cmd_options = ()):
+    def __init__(self, parser, name_prefix, cmd_path, cmd_options = ()):
+        self._parser = parser
+        self._name = "{0}: ({1})".format(name_prefix, cmd_options)
         self._cmd_args = [cmd_path]
         self._cmd_args.extend(cmd_options)
-        self._greenlet = None #used for cancellation only
 
-#---protected--------------------------------------------------------------
-    def parse_solver_reply(self, solver_out, solver_err):
-        """return: parse_error, is_sat, assignment"""
-        assert 0, 'abstract'
+    def solve(self, uniq_query):
+        start = time.time()
+        returned, out, err = team_solver.utils.subproc.popen_communicate(self._cmd_args, uniq_query.query)
+        if returned < 0:
+            raise SolverException("return code < 0: {0}\n stdout:\n{1}\n stderr:\n{2}".format(returned, out, err))
 
-    @property
-    def name(self):
-        return "derived solver hasn't setup its name"
+        finish = time.time()
 
-#---ISolver-----------------------------------------------------------------
-    def solve_async(self, uniq_query, callbackOK, callbackError):
-        assert self._greenlet is None
-        self._greenlet = gevent.spawn(self._solve, uniq_query, callbackOK, callbackError)
+        parse_error, is_sat, assignment = self._parser.parse(out, err)
+        if parse_error is not None:
+            raise SolverException(parse_error)
 
-    def cancel(self):
-        if self._greenlet is not None:
-            self._greenlet.kill()
-            self._greenlet = None #greenlet is created but not started
+        return SolverResult(uniq_query, is_sat, {self: str(finish-start)}, assignment)
 
-#---------------------------------------------------------------------------
-    def _solve(self, uniq_query, callbackOK, callbackError):
-        callback = None
-        try:
-            start = time.time()
-            returned, out, err = team_solver.utils.subproc.popen_communicate(self._cmd_args, uniq_query.query)
-            if returned < 0:
-                error_desc = "return code < 0: {0}\n stdout:\n{1}\n stderr:\n{2}".format(returned, out, err)
-                callback = lambda: callbackError(self, uniq_query, error_desc)
-                return
-
-            finish = time.time()
-
-            parse_error, is_sat, assignment = self.parse_solver_reply(out, err)
-            if parse_error is None:
-                callback = lambda: callbackOK(self, SolverResult(uniq_query, is_sat, {self: str(finish-start)}, assignment))
-            else:
-                callback = lambda: callbackError(self, uniq_query, parse_error)
-        except GreenletExit:
-            callback = lambda: True
-        except Exception, e:
-            print >>sys.stderr, self.name, ": FATAL error: \n", traceback.format_exc()
-            callback = lambda: callbackError(self, uniq_query, e)
-        finally:
-            self._greenlet = None
-            callback()
+    def __str__(self):
+        return self._name

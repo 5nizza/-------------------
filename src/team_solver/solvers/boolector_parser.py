@@ -1,11 +1,7 @@
-from team_solver.solvers.process_solver import ProcessSolver
+from team_solver.solvers.process_solver import IParser
 
-class BoolectorWrapper(ProcessSolver):
-    def __init__(self, cmd_path, cmd_options = ()):
-        ProcessSolver.__init__(self, cmd_path, cmd_options)
-        self._name = 'Boolector: ({0})'.format(cmd_options)
-
-    def parse_solver_reply(self, solver_out, solver_err):
+class BoolectorParser(IParser):
+    def parse(self, solver_out, solver_err):
         if solver_out is None or solver_out.strip() == '':
             return "parse error: solver output is empty", None, None
 
@@ -44,9 +40,3 @@ class BoolectorWrapper(ProcessSolver):
             return 'unknown format: {0}'.format(str(e)), None, None
 
         return None, True, arrs
-
-    @property
-    def name(self):
-        return self._name
-
-

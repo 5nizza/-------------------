@@ -7,7 +7,7 @@ import gevent
 import gevent.event
 from team_solver.tests import common
 
-from team_solver.tests.common import MockSolver
+from team_solver.tests.common import MockSolverAsync
 from team_solver.interfaces.interfaces import SolverResult, UniqueQuery
 
 
@@ -23,8 +23,8 @@ class Test(unittest.TestCase):
             ev_ok.set()
         def callbackError(solver, uniq_query, err_desc): assert 0
 
-        solver1 = MockSolver()
-        solver2 = MockSolver()
+        solver1 = MockSolverAsync()
+        solver2 = MockSolverAsync()
         solver = BenchmarkingSolver([solver1, solver2])
 
         uniq_query = UniqueQuery(123, common.SAT_QUERY_SMT)
@@ -42,8 +42,8 @@ class Test(unittest.TestCase):
             assert not ev_error.is_set()
             ev_error.set()
 
-        solver1 = MockSolver()
-        solver2 = MockSolver()
+        solver1 = MockSolverAsync()
+        solver2 = MockSolverAsync()
         solver = BenchmarkingSolver([solver1, solver2])
 
         uniq_query = UniqueQuery(123, common.SAT_QUERY_SMT)
@@ -61,8 +61,8 @@ class Test(unittest.TestCase):
             ev_ok.set()
         def callbackError(_, uniq_query, err_desc): assert 0
 
-        solver1 = MockSolver()
-        solver2 = MockSolver()
+        solver1 = MockSolverAsync()
+        solver2 = MockSolverAsync()
         solver = BenchmarkingSolver([solver1, solver2])
 
         uniq_query = UniqueQuery(123, common.SAT_QUERY_SMT)

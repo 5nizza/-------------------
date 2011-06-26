@@ -29,7 +29,7 @@ class Test(unittest.TestCase):
                                     ['-stp'] + solvers)
         print 'server_func: exit'
 
-    def client_func(self, port, number_of_queries=1, random_close=False, client_id=None):
+    def client_func(self, port, number_of_queries=1, random_close=False):
         sock = gevent.socket.socket()
         sock.connect(('127.0.0.1', port))
         for _ in range(1, number_of_queries):
@@ -83,7 +83,7 @@ class Test(unittest.TestCase):
 
         greenlets = []
         for _ in range(1, 100):
-            g = gevent.spawn(self.client_func, port, 10, True, _)
+            g = gevent.spawn(self.client_func, port, 10, True)
             greenlets.append(g)
         gevent.joinall(greenlets)
         team_solver.run_server.sigint_handler()

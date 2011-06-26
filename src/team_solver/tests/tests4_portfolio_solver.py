@@ -4,7 +4,9 @@ Created on May 20, 2011
 @author: art_haali
 """""
 import unittest
-from team_solver.solvers.stp_wrapper import STPWrapper
+from team_solver.solvers.async_sync_solver_wrappers import AsyncSolverWrapper
+from team_solver.solvers.process_solver import ProcessSolver
+from team_solver.solvers.stp_parser import STPParser
 from team_solver.solvers.portfolio_solver import PortfolioSolver
 from team_solver.tests import common
 
@@ -28,7 +30,7 @@ class Test(unittest.TestCase):
             assert solver_result.is_sat
             common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT_SMT)
             ev_ok.set()
-        def callbackError(solver, uniq_query, err_desc): assert 0
+        def callbackError(solver, uniq_query, err_desc): assert 0, err_desc
 
         solver = PortfolioSolver(solvers)
         uniq_query = team_solver.interfaces.interfaces.UniqueQuery(123, common.SAT_QUERY_SMT)
@@ -37,13 +39,13 @@ class Test(unittest.TestCase):
         assert ev_ok.wait(5)
 
     def test_sat_query(self):
-        solver1 = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
-        solver2 = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
+        solver1 = AsyncSolverWrapper(ProcessSolver(STPParser(), "STP", common.STP_PATH, ["--SMTLIB2", "-p"]))
+        solver2 = AsyncSolverWrapper(ProcessSolver(STPParser(), "STP", common.STP_PATH, ["--SMTLIB2", "-p"]))
         self._do_sat_test([solver1, solver2])
 
     def test_one_solver_hanged(self):
-        solver1 = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
-        solver2 = STPWrapper("python", ["-c", "while True: pass"])
+        solver1 = AsyncSolverWrapper(ProcessSolver(STPParser(), "STP", common.STP_PATH, ["--SMTLIB2", "-p"]))
+        solver2 = AsyncSolverWrapper(ProcessSolver(None, "python", "python", ["-c", "while True: pass"]))
         self._do_sat_test([solver1, solver2])
 
     def test_sat_stress_test(self):
@@ -53,14 +55,14 @@ class Test(unittest.TestCase):
             assert solver_result.is_sat
             common.assert_sat_assignments(solver_result.assignment, common.SAT_QUERY_ASSIGNMENT_SMT)
             ev_ok.set()
-        def callbackError(solver, uniq_query, err_desc): assert 0
+        def callbackError(solver, uniq_query, err_desc): assert 0, err_desc
 
         solvers = []
         for _ in range(1, 20):
             if random.random() > 1/2.:
-                solver = STPWrapper(common.STP_PATH, ["--SMTLIB2", "-p"])
+                solver = AsyncSolverWrapper(ProcessSolver(STPParser(), "STP", common.STP_PATH, ["--SMTLIB2", "-p"]))
             else:
-                solver = STPWrapper("python", ["-c", "while True: pass"])
+                solver = AsyncSolverWrapper(ProcessSolver(None, "python", "python", ["-c", "while True: pass"]))
             solvers.append(solver)
 
         solver = PortfolioSolver(solvers)

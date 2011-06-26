@@ -1,13 +1,11 @@
-from team_solver.solvers.process_solver import ProcessSolver
+from team_solver.solvers.process_solver import IParser
 import re
 
-class Z3Wrapper(ProcessSolver):
-    def __init__(self, cmd_path, cmd_options = ()):
-        ProcessSolver.__init__(self, cmd_path, cmd_options)
-        self._name = 'Z3: ({0})'.format(cmd_options)
+class Z3Parser(IParser):
+    def __init__(self):
         self._var_re = re.compile("(k![0-9]+)")
 
-    def parse_solver_reply(self, solver_out, solver_err):
+    def parse(self, solver_out, solver_err):
         if solver_out is None or solver_out.strip() == '':
             return "parse error: solver output is empty", None, None
 
@@ -15,7 +13,7 @@ class Z3Wrapper(ProcessSolver):
             return None, False, None
         elif solver_out.split()[-1] != 'sat':
             return "couldn't parse status from the last line", None, None
-        
+
 #(define arr4_0x1c9c2c0 as-array[k!0])
 #(define arr3_0x1ca21c0 as-array[k!1])
 #(define arr1_0x1c90aa0 as-array[k!2])
@@ -71,9 +69,3 @@ class Z3Wrapper(ProcessSolver):
                     arr_by_var[var_name] = arr_name
 
         return arr_by_var
-
-    @property
-    def name(self):
-        return self._name
-
-

@@ -3,7 +3,10 @@ Created on May 24, 2011
 
 @author: art_haali
 """
-from team_solver.interfaces.interfaces import ISolver
+from team_solver.interfaces.interfaces import ISolverAsync
+
+import gevent
+import gevent.event
 
 STP_PATH = "./3rd_party/stp/stp"
 Z3_PATH = "./3rd_party/z3/z3"
@@ -166,17 +169,22 @@ def assert_sat_ser_assignments(ser_a1, ser_a2):
     for a in a1:
         assert a in a2
 
+#noinspection PyUnusedLocal
 def emptyCallbackOK(solver, solver_result):
     pass
 
+#noinspection PyUnusedLocal
 def emptyCallbackError(solver, uniq_query, error_desc):
     pass
 
-class MockSolver(ISolver):
+class MockSolverAsync(ISolverAsync):
+    def __init__(self):
+        self.called = gevent.event.Event()
     
     def solve_async(self, unique_query, callbackOK = emptyCallbackOK, callbackError = emptyCallbackError):
         self._callbackOK = callbackOK
         self._callbackError = callbackError
+        self.called.set()
 
     def cancel(self):
         pass

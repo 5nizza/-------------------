@@ -17,6 +17,7 @@ import gevent
 import gevent.socket
 from team_solver.tests import common
 
+#noinspection PyUnusedLocal
 def _empty(self, uniq_query):
     pass
 
@@ -62,7 +63,7 @@ class Test(unittest.TestCase):
         ev_cancel = gevent.event.Event()
         ev_new = gevent.event.Event()
 
-        with TcpCmdChannel('localhost', 12346, Test.CmdHandler(ev_new, ev_cancel)) as tcp_cmd_channel:
+        with TcpCmdChannel('localhost', 12346, Test.CmdHandler(ev_new, ev_cancel)):
             sock = gevent.socket.socket()
             sock.connect(('localhost', 12346))
             for _ in range(1, 5):
@@ -79,7 +80,7 @@ class Test(unittest.TestCase):
         ev_cancel = gevent.event.Event()
         ev_new = gevent.event.Event()
 
-        with TcpCmdChannel('localhost', 12346, Test.CmdHandler(ev_new, ev_cancel)) as tcp_cmd_channel:
+        with TcpCmdChannel('localhost', 12346, Test.CmdHandler(ev_new, ev_cancel)):
             sock = gevent.socket.socket()
             sock.connect(('localhost', 12346))
             

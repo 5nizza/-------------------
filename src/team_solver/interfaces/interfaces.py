@@ -5,6 +5,7 @@ Created on May 13, 2011
 """
 
 class SolverResult:
+    #TODO: stats_dict -> stats, it shouldn't be a dict
     def __init__(self, unique_query, is_sat, stats_dict=None, assignment=None):
         """ assignment is dict: arr_name -> {dict index->value}
             stats is dict: solver -> stats (str)
@@ -38,6 +39,7 @@ class ICmdHandler:
     def on_cancel_query(self, unique_query):
         raise NotImplementedError()
 
+
 class ICmdChannel:
     def register_cmd_handler(self, cmd_handler): #can you do it better?
         raise NotImplementedError()
@@ -48,7 +50,18 @@ class ICmdChannel:
     def send_result(self, result):
         raise NotImplementedError()
 
-class ISolver:
+    
+class SolverException(Exception):
+    def __init__(self, reason):
+        Exception.__init__(self, reason)
+        self._reason = reason
+
+    @property
+    def reason(self):
+        return self._reason
+
+
+class ISolverAsync:
     def solve_async(self, unique_query, callbackOK, callbackError):
         """ Input:
             callbackOK(solver, solver_result)
@@ -57,4 +70,13 @@ class ISolver:
         raise NotImplementedError()
     def cancel(self):
         raise NotImplementedError()
+
+
+class ISolver:
+    def solve(self, unique_query):
+        """ Return SolverResult
+            Exceptions: SolverException
+        """
+        raise NotImplementedError()
+
 
